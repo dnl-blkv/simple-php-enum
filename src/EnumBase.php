@@ -95,8 +95,8 @@ abstract class EnumBase implements Enum
      */
     protected static function createNameToOrdinalMap(): array
     {
+        static::resetLastOrdinal();
         $nameToOrdinalMap = [];
-        static::$lastOrdinal = null;
 
         foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
             if (static::isEnumConstant($name)) {
@@ -106,6 +106,13 @@ abstract class EnumBase implements Enum
         }
 
         return $nameToOrdinalMap;
+    }
+
+    /**
+     */
+    protected static function resetLastOrdinal()
+    {
+        static::$lastOrdinal = null;
     }
 
     /**
