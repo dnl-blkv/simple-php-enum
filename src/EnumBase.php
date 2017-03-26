@@ -96,6 +96,7 @@ abstract class EnumBase implements Enum
     protected static function createNameToOrdinalMap(): array
     {
         static::resetLastOrdinal();
+
         $nameToOrdinalMap = [];
 
         foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
