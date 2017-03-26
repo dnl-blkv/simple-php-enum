@@ -1,0 +1,36 @@
+{
+    "name": "dnl_blkv/enum",
+    "description": "A simple enum class.",
+    "authors": [
+        {
+            "name": "Daniil Belyakov",
+            "email": "dnl.blkv@gmail.com",
+            "role": "Owner"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "dnl_blkv\\enum\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "dnl_blkv\\enum\\test\\": "test/"
+        }
+    },
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packagist.org"
+        }
+    ],
+    "require": {
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0"
+    },
+    "scripts": {
+
+    }
+}
