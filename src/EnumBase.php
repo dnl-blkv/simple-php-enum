@@ -7,7 +7,7 @@ use ReflectionClass;
 
 /**
  * Base class for custom enums. Enum values are defined as constants. The names of the enum values constants MUST NOT
- * start from "__", and their ordinals MUST be of type int.
+ * start from "__", and their ordinals MUST be either int or null (the latter is for automatic ordinal assignment).
  *
  * @example const CAT = 0;
  */
@@ -125,16 +125,16 @@ abstract class EnumBase implements Enum
 
     /**
      * @param int $lastOrdinal
-     * @param $constantValue
+     * @param int|null $constantValue
      *
      * @return int
      * @throws Exception When the enum constant value is invalid.
      */
-    protected static function getNextOrdinal(int $lastOrdinal, $constantValue): int
+    protected static function getNextOrdinal(int $lastOrdinal, int $constantValue = null): int
     {
         if (is_int($constantValue) && $lastOrdinal < $constantValue) {
             return $constantValue;
-        } elseif ($constantValue === true) {
+        } elseif (is_null($constantValue)) {
             return $lastOrdinal + 1;
         } else {
             throw new Exception(self::__ERROR_ENUM_CONSTANT_VALUE_FORMAT_INVALID);
