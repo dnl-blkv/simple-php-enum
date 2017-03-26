@@ -8,7 +8,7 @@ use Exception;
  * @author Daniil Belyakov <daniil@bunq.com>
  * @since 20170326 Initial creation.
  */
-class InvalidEnumValueException extends Exception
+class InvalidEnumNameException extends Exception
 {
 
 }

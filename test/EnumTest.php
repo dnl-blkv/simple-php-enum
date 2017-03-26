@@ -36,14 +36,6 @@ TEXT;
     }
 
     /**
-     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
-     */
-    public function testCanNotCreateEnumWithMagicMethodForInternalConstant()
-    {
-        SimpleEnum::__SOME_INTERNAL_CONSTANT();
-    }
-
-    /**
      */
     public function testCanCreateEnumFromName()
     {
@@ -148,14 +140,6 @@ TEXT;
     }
 
     /**
-     * @expectedException \dnl_blkv\enum\exception\InvalidEnumValueException
-     */
-    public function testCanNotCreateEnumIfWrongValuePresent()
-    {
-        EnumWithInvalidValue::VALID_VALUE();
-    }
-
-    /**
      * @expectedException BadMethodCallException
      */
     public function testCanNotCallNonExistingMethod()
@@ -169,5 +153,21 @@ TEXT;
     public function testCanNotCallMagicEnumMethodWithArguments()
     {
         SimpleEnum::FISH(true);
+    }
+
+    /**
+     * @expectedException \dnl_blkv\enum\exception\InvalidEnumOrdinalException
+     */
+    public function testCanNotCreateEnumIfWrongValuePresent()
+    {
+        EnumWithInvalidConstantValue::VALID_VALUE();
+    }
+
+    /**
+     * @expectedException \dnl_blkv\enum\exception\InvalidEnumNameException
+     */
+    public function testCanNotCreateEnumIfWrongNamePresent()
+    {
+        EnumWithInvalidConstantName::VALID_NAME();
     }
 }

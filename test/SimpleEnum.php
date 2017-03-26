@@ -12,10 +12,8 @@ use dnl_blkv\enum\EnumBase;
  */
 class SimpleEnum extends EnumBase
 {
-    const __SOME_INTERNAL_CONSTANT = 222;
     const CAT = null;
     const DOG = null;
     const BIRD = 3;
     const FISH = null;
-    const __SOME_OTHER_INTERNAL_CONSTANT = 333;
 }

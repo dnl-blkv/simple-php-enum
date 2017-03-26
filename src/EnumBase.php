@@ -2,10 +2,10 @@
 
 namespace dnl_blkv\enum;
 
-use dnl_blkv\enum\exception\InvalidEnumValueException;
+use dnl_blkv\enum\exception\InvalidEnumNameException;
+use dnl_blkv\enum\exception\InvalidEnumOrdinalException;
 use dnl_blkv\enum\exception\UndefinedEnumNameException;
 use dnl_blkv\enum\exception\UndefinedEnumOrdinalException;
-use Exception;
 use InvalidArgumentException;
 use BadMethodCallException;
 use ReflectionClass;
@@ -26,6 +26,7 @@ abstract class EnumBase implements Enum
     const __ERROR_ENUM_NAME_UNDEFINED = 'Undefined enum name for "%s": "%s".';
     const __ERROR_ENUM_ORDINAL_UNDEFINED = 'Undefined enum ordinal for "%s": "%d".';
     const __ERROR_ENUM_ORDINAL_NOT_INCREASING = 'Last ordinal value "%s" is greater or equal then current "%s".';
+    const __ERROR_ENUM_NAME_NOT_ALLOWED = 'Enum name is not allowed: "%s".';
 
     /**
      * Constants to check whether or not given constant is internal.
@@ -77,8 +78,6 @@ abstract class EnumBase implements Enum
 
     /**
      * @return int[]
-     *
-     * @throws Exception When ordinal has invalid format.
      */
     protected static function createNameToOrdinalMap(): array
     {
@@ -86,7 +85,8 @@ abstract class EnumBase implements Enum
         $lastOrdinal = -1;
 
         foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
-            if (!static::isInternalConstantName($name)) {
+            if (static::isEnumConstant($name)) {
+                static::assertValidEnumConstantName($name);
                 $currentOrdinal = static::getNextOrdinal($lastOrdinal, $constantValue);
                 $nameToOrdinalMap[$name] = $currentOrdinal;
                 $lastOrdinal = $currentOrdinal;
@@ -102,6 +102,58 @@ abstract class EnumBase implements Enum
     protected static function createSelfReflection(): ReflectionClass
     {
         return new ReflectionClass(static::class);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    protected static function isEnumConstant(string $name): bool
+    {
+        return !static::isSelfDefinedConstant($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    protected static function isSelfDefinedConstant(string $name): bool
+    {
+        return defined('self::' . $name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @throws InvalidEnumNameException When the constant name is invalid.
+     */
+    protected static function assertValidEnumConstantName(string $name)
+    {
+        if (!static::isValidEnumConstantName($name)) {
+            throw new InvalidEnumNameException(vsprintf(self::__ERROR_ENUM_NAME_NOT_ALLOWED, [$name]));
+        }
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    protected static function isValidEnumConstantName(string $name): bool
+    {
+        return static::isValidConstantName($name) && !static::isInternalConstantName($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    protected static function isValidConstantName(string $name): bool
+    {
+        return strtoupper($name) === $name;
     }
 
     /**
@@ -133,7 +185,7 @@ abstract class EnumBase implements Enum
      * @param int|null $constantValue
      *
      * @return int
-     * @throws InvalidEnumValueException When the enum constant value is invalid.
+     * @throws InvalidEnumOrdinalException When the enum constant value is invalid.
      */
     protected static function getNextOrdinal(int $lastOrdinal, int $constantValue = null): int
     {
@@ -142,7 +194,7 @@ abstract class EnumBase implements Enum
         } elseif (is_null($constantValue)) {
             return $lastOrdinal + 1;
         } else {
-            throw new InvalidEnumValueException(
+            throw new InvalidEnumOrdinalException(
                 vsprintf(self::__ERROR_ENUM_ORDINAL_NOT_INCREASING, [$lastOrdinal, $constantValue])
             );
         }
@@ -212,7 +264,7 @@ abstract class EnumBase implements Enum
      */
     public static function __callStatic(string $name, array $arguments)
     {
-        if (strtoupper($name) === $name) {
+        if (static::isValidEnumConstantName($name)) {
             static::assertArgumentsEmpty($arguments);
 
             return static::createFromName($name);
