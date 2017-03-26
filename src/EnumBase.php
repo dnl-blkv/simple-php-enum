@@ -12,9 +12,13 @@ use ReflectionClass;
 
 /**
  * Base class for custom enums. Enum values are defined as constants. The names of the enum values constants MUST NOT
- * start from "__", and their ordinals MUST be either int or null (the latter is for automatic ordinal assignment).
+ * start from "__", and their ordinals MUST be either int or null.
+ *
+ * The default starting ordinal for the enums is 0.
  *
  * @example const CAT = 0;
+ * @example const DOG = null;
+ * @example const BIRD = 3;
  */
 abstract class EnumBase implements Enum
 {
@@ -36,6 +40,11 @@ abstract class EnumBase implements Enum
     const __CONSTANT_NAME_PREFIX_LENGTH = 2;
 
     /**
+     * Default value for enum ordinal.
+     */
+    const ORDINAL_DEFAULT = 0;
+
+    /**
      * @var int[]
      */
     protected static $nameToOrdinalMapCache = [];
@@ -44,6 +53,11 @@ abstract class EnumBase implements Enum
      * @var string[]
      */
     protected static $ordinalToNameMapCache = [];
+
+    /**
+     * @var int
+     */
+    protected static $lastOrdinal = null;
 
     /**
      * @var string
@@ -82,14 +96,12 @@ abstract class EnumBase implements Enum
     protected static function createNameToOrdinalMap(): array
     {
         $nameToOrdinalMap = [];
-        $lastOrdinal = -1;
+        static::$lastOrdinal = null;
 
         foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
             if (static::isEnumConstant($name)) {
                 static::assertValidEnumConstantName($name);
-                $currentOrdinal = static::getNextOrdinal($lastOrdinal, $constantValue);
-                $nameToOrdinalMap[$name] = $currentOrdinal;
-                $lastOrdinal = $currentOrdinal;
+                $nameToOrdinalMap[$name] = static::getNextOrdinal($constantValue);
             }
         }
 
@@ -132,7 +144,7 @@ abstract class EnumBase implements Enum
     protected static function assertValidEnumConstantName(string $name)
     {
         if (!static::isValidEnumConstantName($name)) {
-            throw new InvalidEnumNameException(vsprintf(self::__ERROR_ENUM_NAME_NOT_ALLOWED, [$name]));
+            throw new InvalidEnumNameException(sprintf(self::__ERROR_ENUM_NAME_NOT_ALLOWED, $name));
         }
     }
 
@@ -181,23 +193,26 @@ abstract class EnumBase implements Enum
     }
 
     /**
-     * @param int $lastOrdinal
      * @param int|null $constantValue
      *
      * @return int
      * @throws InvalidEnumOrdinalException When the enum constant value is invalid.
      */
-    protected static function getNextOrdinal(int $lastOrdinal, int $constantValue = null): int
+    protected static function getNextOrdinal(int $constantValue = null): int
     {
-        if ($lastOrdinal < $constantValue) {
-            return $constantValue;
+        if (is_null(static::$lastOrdinal)) {
+            static::$lastOrdinal = self::ORDINAL_DEFAULT;
         } elseif (is_null($constantValue)) {
-            return $lastOrdinal + 1;
+            static::$lastOrdinal++;
+        } elseif (static::$lastOrdinal < $constantValue) {
+            static::$lastOrdinal = $constantValue;
         } else {
             throw new InvalidEnumOrdinalException(
-                vsprintf(self::__ERROR_ENUM_ORDINAL_NOT_INCREASING, [$lastOrdinal, $constantValue])
+                sprintf(self::__ERROR_ENUM_ORDINAL_NOT_INCREASING, static::$lastOrdinal, $constantValue)
             );
         }
+
+        return static::$lastOrdinal;
     }
 
     /**
@@ -212,7 +227,7 @@ abstract class EnumBase implements Enum
             return new static(static::getOrdinalToNameMap()[$ordinal]);
         } else {
             throw new UndefinedEnumOrdinalException(
-                vsprintf(self::__ERROR_ENUM_ORDINAL_UNDEFINED, [static::class, $ordinal])
+                sprintf(self::__ERROR_ENUM_ORDINAL_UNDEFINED, static::class, $ordinal)
             );
         }
     }
@@ -269,7 +284,9 @@ abstract class EnumBase implements Enum
 
             return static::createFromName($name);
         } else {
-            throw new BadMethodCallException(vsprintf(self::__ERROR_METHOD_NOT_FOUND, [static::class, $name]));
+            throw new BadMethodCallException(
+                sprintf(self::__ERROR_METHOD_NOT_FOUND, static::class, $name)
+            );
         }
     }
 
@@ -296,7 +313,9 @@ abstract class EnumBase implements Enum
         if (static::isNameDefined($name)) {
             return new static($name);
         } else {
-            throw new UndefinedEnumNameException(vsprintf(self::__ERROR_ENUM_NAME_UNDEFINED, [static::class, $name]));
+            throw new UndefinedEnumNameException(
+                sprintf(self::__ERROR_ENUM_NAME_UNDEFINED, static::class, $name)
+            );
         }
     }
 
