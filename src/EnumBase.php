@@ -152,7 +152,7 @@ abstract class EnumBase implements Enum
      * @param int $ordinal
      *
      * @return static
-     * @throws UndefinedEnumOrdinalException If the enum ordinal is undefined.
+     * @throws UndefinedEnumOrdinalException When the enum ordinal is undefined.
      */
     public static function createFromOrdinal(int $ordinal)
     {
@@ -237,7 +237,7 @@ abstract class EnumBase implements Enum
      * @param string $name
      *
      * @return static
-     * @throws UndefinedEnumNameException If the name does not correspond to an existing enum type.
+     * @throws UndefinedEnumNameException When the name does not correspond to an existing enum type.
      */
     public static function createFromName(string $name)
     {

@@ -1,7 +1,8 @@
 <?php
 namespace dnl_blkv\enum;
 
-use Exception;
+use dnl_blkv\enum\exception\UndefinedEnumNameException;
+use dnl_blkv\enum\exception\UndefinedEnumOrdinalException;
 
 /**
  */
@@ -11,7 +12,7 @@ interface Enum
      * @param string $name
      *
      * @return static
-     * @throws Exception If the name does not correspond to an existing enum type or arguments array is not empty.
+     * @throws UndefinedEnumNameException When the name does not correspond to an existing enum type.
      */
     public static function createFromName(string $name);
 
@@ -19,7 +20,7 @@ interface Enum
      * @param int $ordinal
      *
      * @return static
-     * @throws Exception If the EnumBase ordinal is undefined.
+     * @throws UndefinedEnumOrdinalException When the enum ordinal is undefined.
      */
     public static function createFromOrdinal(int $ordinal);
 
