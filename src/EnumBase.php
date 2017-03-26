@@ -30,7 +30,7 @@ abstract class EnumBase implements Enum
     const __CONSTANT_NAME_PREFIX_LENGTH = 2;
 
     /**
-     * @var string[]
+     * @var int[]
      */
     protected static $nameToOrdinalMapCache = [];
 
