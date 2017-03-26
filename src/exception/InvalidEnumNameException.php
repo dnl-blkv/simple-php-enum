@@ -10,5 +10,16 @@ use Exception;
  */
 class InvalidEnumNameException extends Exception
 {
+    /**
+     * Error constants.
+     */
+    const ERROR_ENUM_NAME_NOT_ALLOWED = 'Enum name is invalid: "%s".';
 
+    /**
+     * @param string $name
+     */
+    public function __construct(string $name)
+    {
+        parent::__construct(sprintf(self::ERROR_ENUM_NAME_NOT_ALLOWED, $name));
+    }
 }

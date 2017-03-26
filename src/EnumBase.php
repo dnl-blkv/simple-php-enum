@@ -3,7 +3,7 @@
 namespace dnl_blkv\enum;
 
 use dnl_blkv\enum\exception\InvalidEnumNameException;
-use dnl_blkv\enum\exception\InvalidEnumOrdinalException;
+use dnl_blkv\enum\exception\EnumOrdinalNotIncreasingException;
 use dnl_blkv\enum\exception\UndefinedEnumNameException;
 use dnl_blkv\enum\exception\UndefinedEnumOrdinalException;
 use InvalidArgumentException;
@@ -27,10 +27,6 @@ abstract class EnumBase implements Enum
      */
     const __ERROR_METHOD_NOT_FOUND = 'Method not found in "%s": "%s".';
     const __ERROR_ARGUMENTS_NOT_EMPTY = 'Calls to enum instantiation methods must not contain arguments.';
-    const __ERROR_ENUM_NAME_UNDEFINED = 'Undefined enum name for "%s": "%s".';
-    const __ERROR_ENUM_ORDINAL_UNDEFINED = 'Undefined enum ordinal for "%s": "%d".';
-    const __ERROR_ENUM_ORDINAL_NOT_INCREASING = 'Last ordinal value "%s" is greater or equal then current "%s".';
-    const __ERROR_ENUM_NAME_NOT_ALLOWED = 'Enum name is not allowed: "%s".';
 
     /**
      * Constants to check whether or not given constant is internal.
@@ -152,7 +148,7 @@ abstract class EnumBase implements Enum
     protected static function assertValidEnumConstantName(string $name)
     {
         if (!static::isValidEnumConstantName($name)) {
-            throw new InvalidEnumNameException(sprintf(self::__ERROR_ENUM_NAME_NOT_ALLOWED, $name));
+            throw new InvalidEnumNameException($name);
         }
     }
 
@@ -204,7 +200,7 @@ abstract class EnumBase implements Enum
      * @param int|null $constantValue
      *
      * @return int
-     * @throws InvalidEnumOrdinalException When the enum constant value is invalid.
+     * @throws EnumOrdinalNotIncreasingException When the enum constant value is invalid.
      */
     protected static function getNextOrdinal(int $constantValue = null): int
     {
@@ -215,9 +211,7 @@ abstract class EnumBase implements Enum
         } elseif (static::$lastOrdinal < $constantValue) {
             static::$lastOrdinal = $constantValue;
         } else {
-            throw new InvalidEnumOrdinalException(
-                sprintf(self::__ERROR_ENUM_ORDINAL_NOT_INCREASING, static::$lastOrdinal, $constantValue)
-            );
+            throw new EnumOrdinalNotIncreasingException(static::$lastOrdinal, $constantValue);
         }
 
         return static::$lastOrdinal;
@@ -234,9 +228,7 @@ abstract class EnumBase implements Enum
         if (static::isOrdinalDefined($ordinal)) {
             return new static(static::getOrdinalToNameMap()[$ordinal]);
         } else {
-            throw new UndefinedEnumOrdinalException(
-                sprintf(self::__ERROR_ENUM_ORDINAL_UNDEFINED, static::class, $ordinal)
-            );
+            throw new UndefinedEnumOrdinalException(static::class, $ordinal);
         }
     }
 
@@ -321,9 +313,7 @@ abstract class EnumBase implements Enum
         if (static::isNameDefined($name)) {
             return new static($name);
         } else {
-            throw new UndefinedEnumNameException(
-                sprintf(self::__ERROR_ENUM_NAME_UNDEFINED, static::class, $name)
-            );
+            throw new UndefinedEnumNameException(static::class, $name);
         }
     }
 

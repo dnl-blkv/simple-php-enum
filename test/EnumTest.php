@@ -156,7 +156,7 @@ TEXT;
     }
 
     /**
-     * @expectedException \dnl_blkv\enum\exception\InvalidEnumOrdinalException
+     * @expectedException \dnl_blkv\enum\exception\EnumOrdinalNotIncreasingException
      */
     public function testCanNotCreateEnumIfWrongValuePresent()
     {
