@@ -3,7 +3,6 @@ namespace dnl_blkv\enum\test;
 
 use PHPUnit\Framework\TestCase;
 use Exception;
-use Closure;
 
 /**
  */
@@ -28,46 +27,19 @@ TEXT;
     }
 
     /**
+     * @expectedException Exception
      */
     public function testCanNotCreateEnumWithMagicMethodForUndefinedConstant()
     {
-        static::assertTriggersException(
-            function () {
-                return SimpleEnum::SCAT();
-            },
-            'Undefined enum name for "dnl_blkv\enum\test\SimpleEnum": "SCAT".'
-        );
+        SimpleEnum::SCAT();
     }
 
     /**
-     * @param Closure $function
-     * @param string $errorMessageExpected
-     */
-    private static function assertTriggersException(Closure $function, string $errorMessageExpected)
-    {
-        $errorMessageActual = '';
-
-        try {
-            $result = $function();
-        } catch (Exception $e) {
-            $result = null;
-            $errorMessageActual = $e->getMessage();
-        }
-
-        static::assertEquals($result, null);
-        static::assertEquals($errorMessageExpected, $errorMessageActual);
-    }
-
-    /**
+     * @expectedException Exception
      */
     public function testCanNotCreateEnumWithMagicMethodForInternalConstant()
     {
-        static::assertTriggersException(
-            function () {
-                return SimpleEnum::__SOME_INTERNAL_CONSTANT();
-            },
-            'Undefined enum name for "dnl_blkv\enum\test\SimpleEnum": "__SOME_INTERNAL_CONSTANT".'
-        );
+        SimpleEnum::__SOME_INTERNAL_CONSTANT();
     }
 
     /**
@@ -78,27 +50,19 @@ TEXT;
     }
 
     /**
+     * @expectedException Exception
      */
     public function testCanNotCreateEnumFromUndefinedName()
     {
-        static::assertTriggersException(
-            function () {
-                return SimpleEnum::createFromName('SCAT');
-            },
-            'Undefined enum name for "dnl_blkv\enum\test\SimpleEnum": "SCAT".'
-        );
+        SimpleEnum::createFromName('SCAT');
     }
 
     /**
+     * @expectedException Exception
      */
     public function testCanNotCreateEnumFromNameOfInternalConstant()
     {
-        static::assertTriggersException(
-            function () {
-                return SimpleEnum::createFromName('__SOME_INTERNAL_CONSTANT');
-            },
-            'Undefined enum name for "dnl_blkv\enum\test\SimpleEnum": "__SOME_INTERNAL_CONSTANT".'
-        );
+        SimpleEnum::createFromName('__SOME_INTERNAL_CONSTANT');
     }
 
     /**
@@ -116,42 +80,34 @@ TEXT;
     }
 
     /**
+     * @expectedException Exception
      */
     public function testCanNotCreateEnumFromUndefinedOrdinal()
     {
-        static::assertTriggersException(
-            function () {
-                return SimpleEnum::createFromOrdinal(20);
-            },
-            'Undefined enum ordinal for "dnl_blkv\enum\test\SimpleEnum": "20".'
-        );
+        SimpleEnum::createFromOrdinal(20);
     }
 
     /**
+     * @expectedException Exception
      */
     public function testCanNotCreateEnumFromOrdinalOfInternalConstant()
     {
-        static::assertTriggersException(
-            function () {
-                return SimpleEnum::createFromOrdinal(222);
-            },
-            'Undefined enum ordinal for "dnl_blkv\enum\test\SimpleEnum": "222".'
-        );
+        SimpleEnum::createFromOrdinal(222);
     }
 
     /**
      */
     public function testCanCheckEnumNameIsDefined()
     {
-        self::assertEquals(true, SimpleEnum::isNameDefined('FISH'));
+        self::assertTrue(SimpleEnum::isNameDefined('FISH'));
     }
 
     /**
      */
     public function testCanCheckEnumNameIsNotDefined()
     {
-        self::assertEquals(false, SimpleEnum::isNameDefined('GISH'));
-        self::assertEquals(false, SimpleEnum::isNameDefined('__SOME_INTERNAL_CONSTANT'));
+        self::assertFalse(SimpleEnum::isNameDefined('GISH'));
+        self::assertFalse(SimpleEnum::isNameDefined('__SOME_INTERNAL_CONSTANT'));
     }
 
     /**
@@ -165,15 +121,15 @@ TEXT;
      */
     public function testCanCheckEnumOrdinalIsDefined()
     {
-        self::assertEquals(true, SimpleEnum::isOrdinalDefined(1));
+        self::assertTrue(SimpleEnum::isOrdinalDefined(1));
     }
 
     /**
      */
     public function testCanCheckEnumOrdinalIsNotDefined()
     {
-        self::assertEquals(false, SimpleEnum::isOrdinalDefined(5));
-        self::assertEquals(false, SimpleEnum::isOrdinalDefined(222));
+        self::assertFalse(SimpleEnum::isOrdinalDefined(5));
+        self::assertFalse(SimpleEnum::isOrdinalDefined(222));
     }
 
     /**
