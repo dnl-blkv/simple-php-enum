@@ -2,7 +2,8 @@
 namespace dnl_blkv\enum\test;
 
 use PHPUnit\Framework\TestCase;
-use Exception;
+use BadMethodCallException;
+use InvalidArgumentException;
 
 /**
  */
@@ -27,7 +28,7 @@ TEXT;
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
      */
     public function testCanNotCreateEnumWithMagicMethodForUndefinedConstant()
     {
@@ -35,7 +36,7 @@ TEXT;
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
      */
     public function testCanNotCreateEnumWithMagicMethodForInternalConstant()
     {
@@ -50,7 +51,7 @@ TEXT;
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
      */
     public function testCanNotCreateEnumFromUndefinedName()
     {
@@ -58,7 +59,7 @@ TEXT;
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
      */
     public function testCanNotCreateEnumFromNameOfInternalConstant()
     {
@@ -80,7 +81,7 @@ TEXT;
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumOrdinalException
      */
     public function testCanNotCreateEnumFromUndefinedOrdinal()
     {
@@ -88,7 +89,7 @@ TEXT;
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumOrdinalException
      */
     public function testCanNotCreateEnumFromOrdinalOfInternalConstant()
     {
@@ -144,5 +145,29 @@ TEXT;
     public function testCanConvertToString()
     {
         static::assertEquals(self::EXPECTED_RESULT_SIMPLE_ENUM_FISH_AS_STRING, strval(SimpleEnum::FISH()));
+    }
+
+    /**
+     * @expectedException \dnl_blkv\enum\exception\InvalidEnumValueException
+     */
+    public function testCanNotCreateEnumIfWrongValuePresent()
+    {
+        EnumWithInvalidValue::VALID_VALUE();
+    }
+
+    /**
+     * @expectedException BadMethodCallException
+     */
+    public function testCanNotCallNonExistingMethod()
+    {
+        SimpleEnum::nonExistingMethod();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCallMagicEnumMethodWithArguments()
+    {
+        SimpleEnum::FISH(true);
     }
 }

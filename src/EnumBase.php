@@ -2,7 +2,12 @@
 
 namespace dnl_blkv\enum;
 
+use dnl_blkv\enum\exception\InvalidEnumValueException;
+use dnl_blkv\enum\exception\UndefinedEnumNameException;
+use dnl_blkv\enum\exception\UndefinedEnumOrdinalException;
 use Exception;
+use InvalidArgumentException;
+use BadMethodCallException;
 use ReflectionClass;
 
 /**
@@ -20,7 +25,7 @@ abstract class EnumBase implements Enum
     const __ERROR_ARGUMENTS_NOT_EMPTY = 'Calls to enum instantiation methods must not contain arguments.';
     const __ERROR_ENUM_NAME_UNDEFINED = 'Undefined enum name for "%s": "%s".';
     const __ERROR_ENUM_ORDINAL_UNDEFINED = 'Undefined enum ordinal for "%s": "%d".';
-    const __ERROR_ENUM_CONSTANT_VALUE_FORMAT_INVALID = 'Enum constant value must be either an integer "true".';
+    const __ERROR_ENUM_ORDINAL_NOT_INCREASING = 'Last ordinal value "%s" is greater or equal then current "%s".';
 
     /**
      * Constants to check whether or not given constant is internal.
@@ -128,16 +133,18 @@ abstract class EnumBase implements Enum
      * @param int|null $constantValue
      *
      * @return int
-     * @throws Exception When the enum constant value is invalid.
+     * @throws InvalidEnumValueException When the enum constant value is invalid.
      */
     protected static function getNextOrdinal(int $lastOrdinal, int $constantValue = null): int
     {
-        if (is_int($constantValue) && $lastOrdinal < $constantValue) {
+        if ($lastOrdinal < $constantValue) {
             return $constantValue;
         } elseif (is_null($constantValue)) {
             return $lastOrdinal + 1;
         } else {
-            throw new Exception(self::__ERROR_ENUM_CONSTANT_VALUE_FORMAT_INVALID);
+            throw new InvalidEnumValueException(
+                vsprintf(self::__ERROR_ENUM_ORDINAL_NOT_INCREASING, [$lastOrdinal, $constantValue])
+            );
         }
     }
 
@@ -145,14 +152,16 @@ abstract class EnumBase implements Enum
      * @param int $ordinal
      *
      * @return static
-     * @throws Exception If the enum ordinal is undefined.
+     * @throws UndefinedEnumOrdinalException If the enum ordinal is undefined.
      */
     public static function createFromOrdinal(int $ordinal)
     {
         if (static::isOrdinalDefined($ordinal)) {
             return new static(static::getOrdinalToNameMap()[$ordinal]);
         } else {
-            throw new Exception(vsprintf(self::__ERROR_ENUM_ORDINAL_UNDEFINED, [static::class, $ordinal]));
+            throw new UndefinedEnumOrdinalException(
+                vsprintf(self::__ERROR_ENUM_ORDINAL_UNDEFINED, [static::class, $ordinal])
+            );
         }
     }
 
@@ -199,7 +208,7 @@ abstract class EnumBase implements Enum
      * @param mixed[] $arguments
      *
      * @return static
-     * @throws Exception When the method is not found.
+     * @throws BadMethodCallException When the method is not found.
      */
     public static function __callStatic(string $name, array $arguments)
     {
@@ -208,19 +217,19 @@ abstract class EnumBase implements Enum
 
             return static::createFromName($name);
         } else {
-            throw new Exception(vsprintf(self::__ERROR_METHOD_NOT_FOUND, [static::class, $name]));
+            throw new BadMethodCallException(vsprintf(self::__ERROR_METHOD_NOT_FOUND, [static::class, $name]));
         }
     }
 
     /**
      * @param mixed[] $arguments
      *
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     protected static function assertArgumentsEmpty(array $arguments)
     {
         if (!empty($arguments)) {
-            throw new Exception(self::__ERROR_ARGUMENTS_NOT_EMPTY);
+            throw new InvalidArgumentException(self::__ERROR_ARGUMENTS_NOT_EMPTY);
         }
     }
 
@@ -228,14 +237,14 @@ abstract class EnumBase implements Enum
      * @param string $name
      *
      * @return static
-     * @throws Exception If the name does not correspond to an existing enum type or arguments array is not empty.
+     * @throws UndefinedEnumNameException If the name does not correspond to an existing enum type.
      */
     public static function createFromName(string $name)
     {
         if (static::isNameDefined($name)) {
             return new static($name);
         } else {
-            throw new Exception(vsprintf(self::__ERROR_ENUM_NAME_UNDEFINED, [static::class, $name]));
+            throw new UndefinedEnumNameException(vsprintf(self::__ERROR_ENUM_NAME_UNDEFINED, [static::class, $name]));
         }
     }
 
