@@ -49,6 +49,8 @@ interface Enum
     public function getOrdinal(): int;
 
     /**
+     * Enums are equal if they have the same class and ordinal value.
+     *
      * @param Enum $other
      *
      * @return bool
@@ -56,6 +58,8 @@ interface Enum
     public function isEqual(Enum $other): bool;
 
     /**
+     * Enums are same if they have the same class, ordinal value and name.
+     *
      * @param Enum $other
      *
      * @return bool
