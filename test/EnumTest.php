@@ -1,6 +1,7 @@
 <?php
 namespace dnl_blkv\enum\test;
 
+use dnl_blkv\enum\Enum;
 use PHPUnit\Framework\TestCase;
 use BadMethodCallException;
 use InvalidArgumentException;
@@ -156,18 +157,60 @@ TEXT;
     }
 
     /**
-     * @expectedException \dnl_blkv\enum\exception\EnumOrdinalNotIncreasingException
-     */
-    public function testCanNotCreateEnumIfWrongValuePresent()
-    {
-        EnumWithInvalidConstantValue::VALID_VALUE();
-    }
-
-    /**
      * @expectedException \dnl_blkv\enum\exception\InvalidEnumNameException
      */
     public function testCanNotCreateEnumIfWrongNamePresent()
     {
         EnumWithInvalidConstantName::VALID_NAME();
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsEqualCheck
+     */
+    public function testCanCheckIsEqual(Enum $one, Enum $other, bool $resultExpected)
+    {
+        self::assertEquals($resultExpected, $one->isEqual($other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsEqualCheck()
+    {
+        return [
+            'FISH vs FISH' => [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
+            'FISH vs CAT' => [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
+            'DOG vs other DOG' => [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
+            'CAT vs DEFAULT' => [OtherSimpleEnum::CAT(), OtherSimpleEnum::DEFAULT(), true],
+        ];
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsSameCheck
+     */
+    public function testCanCheckIsSame(Enum $one, Enum $other, bool $resultExpected)
+    {
+        self::assertEquals($resultExpected, $one->isSame($other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsSameCheck()
+    {
+        return [
+            [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
+            [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
+            [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
+            [OtherSimpleEnum::CAT(), OtherSimpleEnum::DEFAULT(), false],
+        ];
     }
 }

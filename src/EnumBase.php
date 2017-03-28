@@ -3,7 +3,6 @@
 namespace dnl_blkv\enum;
 
 use dnl_blkv\enum\exception\InvalidEnumNameException;
-use dnl_blkv\enum\exception\EnumOrdinalNotIncreasingException;
 use dnl_blkv\enum\exception\UndefinedEnumNameException;
 use dnl_blkv\enum\exception\UndefinedEnumOrdinalException;
 use InvalidArgumentException;
@@ -41,14 +40,14 @@ abstract class EnumBase implements Enum
     const ORDINAL_DEFAULT = 0;
 
     /**
-     * @var int[]
+     * @var static[]
      */
-    protected static $nameToOrdinalMapCache = [];
+    protected static $nameToInstanceMapCache = [];
 
     /**
-     * @var string[]
+     * @var static[]
      */
-    protected static $ordinalToNameMapCache = [];
+    protected static $ordinalToInstanceMapCache = [];
 
     /**
      * @var int
@@ -67,29 +66,83 @@ abstract class EnumBase implements Enum
 
     /**
      * @param string $name
+     * @param int $ordinal
      */
-    protected function __construct(string $name)
+    protected function __construct(string $name, int $ordinal)
     {
         $this->name = $name;
-        $this->ordinal = static::getNameToOrdinalMap()[$name];
+        $this->ordinal = $ordinal;
     }
 
     /**
-     * @return string[]
+     * @param int $ordinal
+     *
+     * @return static
+     * @throws UndefinedEnumOrdinalException When the enum ordinal is undefined.
      */
-    protected static function getNameToOrdinalMap(): array
+    public static function createFromOrdinal(int $ordinal)
     {
-        if (!isset(static::$nameToOrdinalMapCache[static::class])) {
-            static::$nameToOrdinalMapCache[static::class] = static::createNameToOrdinalMap();
+        if (static::isOrdinalDefined($ordinal)) {
+            return static::getOrdinalToInstanceMap()[$ordinal];
+        } else {
+            throw new UndefinedEnumOrdinalException(static::class, $ordinal);
+        }
+    }
+
+    /**
+     * @param int $ordinal
+     *
+     * @return bool
+     */
+    public static function isOrdinalDefined(int $ordinal): bool
+    {
+        return isset(static::getOrdinalToInstanceMap()[$ordinal]);
+    }
+
+    /**
+     * @return static[]
+     */
+    protected static function getOrdinalToInstanceMap(): array
+    {
+        if (!isset(static::$ordinalToInstanceMapCache[static::class])) {
+            static::$ordinalToInstanceMapCache[static::class] = static::createOrdinalToInstanceMap();
         }
 
-        return static::$nameToOrdinalMapCache[static::class];
+        return static::$ordinalToInstanceMapCache[static::class];
     }
 
     /**
-     * @return int[]
+     * @return static[]
      */
-    protected static function createNameToOrdinalMap(): array
+    protected static function createOrdinalToInstanceMap(): array
+    {
+        $ordinalToInstanceMap = [];
+
+        foreach (static::getNameToInstanceMap() as $name => $instance) {
+            if (!isset($ordinalToInstanceMap[$instance->getOrdinal()])) {
+                $ordinalToInstanceMap[$instance->getOrdinal()] = $instance;
+            }
+        }
+
+        return $ordinalToInstanceMap;
+    }
+
+    /**
+     * @return static[]
+     */
+    protected static function getNameToInstanceMap(): array
+    {
+        if (!isset(static::$nameToInstanceMapCache[static::class])) {
+            static::$nameToInstanceMapCache[static::class] = static::createNameToInstanceMap();
+        }
+
+        return static::$nameToInstanceMapCache[static::class];
+    }
+
+    /**
+     * @return static[]
+     */
+    protected static function createNameToInstanceMap(): array
     {
         static::resetLastOrdinal();
 
@@ -98,7 +151,7 @@ abstract class EnumBase implements Enum
         foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
             if (static::isEnumConstant($name)) {
                 static::assertValidEnumConstantName($name);
-                $nameToOrdinalMap[$name] = static::getNextOrdinal($constantValue);
+                $nameToOrdinalMap[$name] = new static($name, static::getNextOrdinal($constantValue));
             }
         }
 
@@ -200,7 +253,6 @@ abstract class EnumBase implements Enum
      * @param int|null $constantValue
      *
      * @return int
-     * @throws EnumOrdinalNotIncreasingException When the enum constant value is invalid.
      */
     protected static function getNextOrdinal(int $constantValue = null): int
     {
@@ -208,50 +260,19 @@ abstract class EnumBase implements Enum
             static::$lastOrdinal = self::ORDINAL_DEFAULT;
         } elseif (is_null($constantValue)) {
             static::$lastOrdinal++;
-        } elseif (static::$lastOrdinal < $constantValue) {
-            static::$lastOrdinal = $constantValue;
         } else {
-            throw new EnumOrdinalNotIncreasingException(static::$lastOrdinal, $constantValue);
+            static::$lastOrdinal = $constantValue;
         }
 
         return static::$lastOrdinal;
     }
 
     /**
-     * @param int $ordinal
-     *
-     * @return static
-     * @throws UndefinedEnumOrdinalException When the enum ordinal is undefined.
+     * @return int
      */
-    public static function createFromOrdinal(int $ordinal)
+    public function getOrdinal(): int
     {
-        if (static::isOrdinalDefined($ordinal)) {
-            return new static(static::getOrdinalToNameMap()[$ordinal]);
-        } else {
-            throw new UndefinedEnumOrdinalException(static::class, $ordinal);
-        }
-    }
-
-    /**
-     * @param int $ordinal
-     *
-     * @return bool
-     */
-    public static function isOrdinalDefined(int $ordinal): bool
-    {
-        return isset(static::getOrdinalToNameMap()[$ordinal]);
-    }
-
-    /**
-     * @return string[]
-     */
-    protected static function getOrdinalToNameMap(): array
-    {
-        if (!isset(static::$ordinalToNameMapCache[static::class])) {
-            static::$ordinalToNameMapCache[static::class] = array_flip(static::getNameToOrdinalMap());
-        }
-
-        return static::$ordinalToNameMapCache[static::class];
+        return $this->ordinal;
     }
 
     /**
@@ -263,11 +284,13 @@ abstract class EnumBase implements Enum
     }
 
     /**
-     * @return int
+     * @param Enum $other
+     *
+     * @return bool
      */
-    public function getOrdinal(): int
+    public function isSame(Enum $other): bool
     {
-        return $this->ordinal;
+        return $this === $other;
     }
 
     /**
@@ -311,7 +334,7 @@ abstract class EnumBase implements Enum
     public static function createFromName(string $name)
     {
         if (static::isNameDefined($name)) {
-            return new static($name);
+            return static::getNameToInstanceMap()[$name];
         } else {
             throw new UndefinedEnumNameException(static::class, $name);
         }
@@ -324,7 +347,17 @@ abstract class EnumBase implements Enum
      */
     public static function isNameDefined(string $name): bool
     {
-        return isset(static::getNameToOrdinalMap()[$name]);
+        return isset(static::getNameToInstanceMap()[$name]);
+    }
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    public function isEqual(Enum $other): bool
+    {
+        return $this->getOrdinal() === $other->getOrdinal() && static::class === get_class($other);
     }
 
     /**

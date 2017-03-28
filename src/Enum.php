@@ -47,4 +47,18 @@ interface Enum
      * @return int
      */
     public function getOrdinal(): int;
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    public function isEqual(Enum $other): bool;
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    public function isSame(Enum $other): bool;
 }
