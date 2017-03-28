@@ -1,6 +1,6 @@
 {
     "name": "dnl_blkv/enum",
-    "description": "A simple enum class.",
+    "description": "A simple C/C++ alike enum class.",
     "authors": [
         {
             "name": "Daniil Belyakov",
