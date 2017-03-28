@@ -29,13 +29,7 @@ abstract class EnumBase implements Enum
      * Error constants.
      */
     const __ERROR_METHOD_NOT_FOUND = 'Method not found in "%s": "%s".';
-    const __ERROR_ARGUMENTS_NOT_EMPTY = 'Calls to enum instantiation methods must not contain arguments.';
-
-    /**
-     * Constants to check whether or not given constant is internal.
-     */
-    const __CONSTANT_NAME_PREFIX_START = 0;
-    const __CONSTANT_NAME_PREFIX_LENGTH = 2;
+    const __ERROR_ARGUMENTS_NOT_EMPTY = 'Enum instantiation methods do not accept arguments.';
 
     /**
      * Default value for enum ordinal.
