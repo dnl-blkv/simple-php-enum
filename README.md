@@ -1,1 +1,1 @@
-A simple PHP library for Enums.
+A simple C/C++ alike PHP library for Enums.
