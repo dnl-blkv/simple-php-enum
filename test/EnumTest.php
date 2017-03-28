@@ -82,14 +82,6 @@ TEXT;
     }
 
     /**
-     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumOrdinalException
-     */
-    public function testCanNotCreateEnumFromOrdinalOfInternalConstant()
-    {
-        SimpleEnum::createFromOrdinal(222);
-    }
-
-    /**
      */
     public function testCanCheckEnumNameIsDefined()
     {
@@ -123,7 +115,6 @@ TEXT;
     public function testCanCheckEnumOrdinalIsNotDefined()
     {
         self::assertFalse(SimpleEnum::isOrdinalDefined(5));
-        self::assertFalse(SimpleEnum::isOrdinalDefined(222));
     }
 
     /**
@@ -182,10 +173,10 @@ TEXT;
     public static function enumPairProviderIsEqualCheck()
     {
         return [
-            'FISH vs FISH' => [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
-            'FISH vs CAT' => [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
-            'DOG vs other DOG' => [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
-            'CAT vs DEFAULT' => [OtherSimpleEnum::CAT(), OtherSimpleEnum::DEFAULT(), true],
+            [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
+            [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
+            [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
+            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT(), true],
         ];
     }
 
@@ -210,7 +201,17 @@ TEXT;
             [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
             [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
             [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
-            [OtherSimpleEnum::CAT(), OtherSimpleEnum::DEFAULT(), false],
+            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT(), false],
         ];
+    }
+
+    /**
+     */
+    public static function testCanCreateFromDuplicateOrdinal()
+    {
+        $defaultEnumOrdinal = EnumWithDuplicatedOrdinal::DEFAULT()->getOrdinal();
+        $catEnum = OtherSimpleEnum::createFromOrdinal($defaultEnumOrdinal);
+
+        self::assertTrue(OtherSimpleEnum::CAT()->isSame($catEnum));
     }
 }

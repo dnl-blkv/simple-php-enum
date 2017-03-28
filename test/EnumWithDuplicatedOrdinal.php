@@ -9,11 +9,13 @@ use dnl_blkv\enum\EnumBase;
  * @method static static DOG()
  * @method static static BIRD()
  * @method static static FISH()
+ * @method static static DEFAULT()
  */
-class OtherSimpleEnum extends EnumBase
+class EnumWithDuplicatedOrdinal extends EnumBase
 {
     const CAT = null;
     const DOG = null;
     const BIRD = 3;
     const FISH = null;
+    const DEFAULT = 0;
 }

@@ -10,9 +10,13 @@ use BadMethodCallException;
 use ReflectionClass;
 
 /**
- * Base class for custom enums. Enum values are defined as constants. The names of the enum values constants MUST NOT
- * start from "__", and their ordinals MUST be either int or null.
+ * Base class for custom enums. Enum values are defined as constants.
  *
+ * The names of the enum constants MUST be:
+ * - PSR-1 compliant (declared in all upper case with underscore separators)
+ * - Start with an uppercase letter
+ *
+ * The values of the enum constants (ordinals) MUST be either int or null, where null means "auto-determine ordinal".
  * The default starting ordinal for the enums is 0.
  *
  * @example const CAT = 0;
@@ -30,7 +34,6 @@ abstract class EnumBase implements Enum
     /**
      * Constants to check whether or not given constant is internal.
      */
-    const __CONSTANT_NAME_PREFIX_INTERNAL_CONSTANT = '__';
     const __CONSTANT_NAME_PREFIX_START = 0;
     const __CONSTANT_NAME_PREFIX_LENGTH = 2;
 
@@ -212,7 +215,7 @@ abstract class EnumBase implements Enum
      */
     protected static function isValidEnumConstantName(string $name): bool
     {
-        return static::isValidConstantName($name) && !static::isInternalConstantName($name);
+        return static::isPSR1CompliantConstantName($name) && static::isEnumConstantName($name);
     }
 
     /**
@@ -220,7 +223,7 @@ abstract class EnumBase implements Enum
      *
      * @return bool
      */
-    protected static function isValidConstantName(string $name): bool
+    protected static function isPSR1CompliantConstantName(string $name): bool
     {
         return strtoupper($name) === $name;
     }
@@ -230,23 +233,9 @@ abstract class EnumBase implements Enum
      *
      * @return bool
      */
-    protected static function isInternalConstantName(string $name): bool
+    protected static function isEnumConstantName(string $name): bool
     {
-        return static::getConstantNamePrefix($name) === self::__CONSTANT_NAME_PREFIX_INTERNAL_CONSTANT;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    protected static function getConstantNamePrefix(string $name): string
-    {
-        return substr(
-            $name,
-            self::__CONSTANT_NAME_PREFIX_START,
-            self::__CONSTANT_NAME_PREFIX_LENGTH
-        );
+        return ctype_upper($name[0]);
     }
 
     /**
