@@ -32,6 +32,11 @@ abstract class EnumBase implements Enum
     const __ERROR_ARGUMENTS_NOT_EMPTY = 'Enum instantiation methods do not accept arguments.';
 
     /**
+     * The prefix we use to access a constant which is defined in "self".
+     */
+    const __PREFIX_SELF_DEFINED_CONSTANT_ACCESS = 'self::';
+
+    /**
      * Default value for enum ordinal.
      */
     const ORDINAL_DEFAULT = 0;
@@ -187,7 +192,7 @@ abstract class EnumBase implements Enum
      */
     protected static function isSelfDefinedConstant(string $name): bool
     {
-        return defined('self::' . $name);
+        return defined(self::__PREFIX_SELF_DEFINED_CONSTANT_ACCESS . $name);
     }
 
     /**
@@ -348,9 +353,6 @@ abstract class EnumBase implements Enum
      */
     public function __toString(): string
     {
-        return json_encode(
-            [static::class => [$this->name => $this->ordinal]],
-            JSON_PRETTY_PRINT | JSON_BIGINT_AS_STRING | JSON_UNESCAPED_SLASHES
-        );
+        return json_encode([static::class => [$this->name => $this->ordinal]], JSON_PRETTY_PRINT);
     }
 }
