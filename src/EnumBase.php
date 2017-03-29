@@ -54,7 +54,7 @@ abstract class EnumBase implements Enum
     /**
      * @var int
      */
-    protected static $lastOrdinal = null;
+    protected static $lastOrdinal;
 
     /**
      * @var string
@@ -164,7 +164,7 @@ abstract class EnumBase implements Enum
      */
     protected static function resetLastOrdinal()
     {
-        static::$lastOrdinal = null;
+        static::$lastOrdinal = self::ORDINAL_DEFAULT - 1;
     }
 
     /**
@@ -244,9 +244,7 @@ abstract class EnumBase implements Enum
      */
     protected static function getNextOrdinal(int $constantValue = null): int
     {
-        if (is_null(static::$lastOrdinal)) {
-            static::$lastOrdinal = self::ORDINAL_DEFAULT;
-        } elseif (is_null($constantValue)) {
+        if (is_null($constantValue)) {
             static::$lastOrdinal++;
         } else {
             static::$lastOrdinal = $constantValue;
