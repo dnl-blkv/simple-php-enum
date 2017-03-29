@@ -69,3 +69,7 @@ fabric.properties
 
 # Sonarlint plugin
 .idea/sonarlint
+
+# Humbug
+humblogjson.json
+humbuglog.txt

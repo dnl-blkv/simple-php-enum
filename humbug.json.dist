@@ -2,13 +2,11 @@
     "source": {
         "directories": [
             "src"
-        ],
-        "exclude": [
-            "test"
         ]
     },
     "timeout": 10,
     "logs": {
-        "text": "humbuglog.txt"
+        "text": "humbuglog.txt",
+        "json": "humblogjson.json"
     }
 }
