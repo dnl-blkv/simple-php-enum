@@ -176,7 +176,7 @@ TEXT;
             [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
             [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
             [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
-            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT_CHOICE(), true],
+            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT(), true],
         ];
     }
 
@@ -201,7 +201,7 @@ TEXT;
             [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
             [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
             [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
-            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT_CHOICE(), false],
+            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT(), false],
         ];
     }
 
@@ -209,7 +209,7 @@ TEXT;
      */
     public static function testCanCreateFromDuplicateOrdinal()
     {
-        $defaultEnumOrdinal = EnumWithDuplicatedOrdinal::DEFAULT_CHOICE()->getOrdinal();
+        $defaultEnumOrdinal = EnumWithDuplicatedOrdinal::DEFAULT()->getOrdinal();
         $catEnum = OtherSimpleEnum::createFromOrdinal($defaultEnumOrdinal);
 
         self::assertTrue(OtherSimpleEnum::CAT()->isSame($catEnum));

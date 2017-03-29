@@ -9,7 +9,7 @@ use dnl_blkv\enum\EnumBase;
  * @method static static DOG()
  * @method static static BIRD()
  * @method static static FISH()
- * @method static static DEFAULT_CHOICE()
+ * @method static static DEFAULT()
  */
 class EnumWithDuplicatedOrdinal extends EnumBase
 {
@@ -17,5 +17,5 @@ class EnumWithDuplicatedOrdinal extends EnumBase
     const DOG = null;
     const BIRD = 3;
     const FISH = null;
-    const DEFAULT_CHOICE = 0;
+    const DEFAULT = 0;
 }
