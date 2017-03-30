@@ -120,7 +120,7 @@ abstract class AbstractEnum implements EnumInterface
     {
         $ordinalToInstanceMap = [];
 
-        foreach (static::getNameToInstanceMap() as $name => $instance) {
+        foreach (static::getNameToInstanceMap() as $instance) {
             if (!isset($ordinalToInstanceMap[$instance->getOrdinal()])) {
                 $ordinalToInstanceMap[$instance->getOrdinal()] = $instance;
             }
