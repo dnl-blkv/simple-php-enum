@@ -7,7 +7,7 @@ A simple C/C++ alike PHP library for Enums.
 [![codecov](https://codecov.io/gh/dnl-blkv/simple-php-enum/branch/master/graph/badge.svg)](https://codecov.io/gh/dnl-blkv/simple-php-enum)
 
 ## PHP Version Support
-The package is new and thus only supports PHP `^7.0`.
+The package is new and thus only supports PHP `>=7.0`.
 
 # How To Basic
 ## Defining Enums
