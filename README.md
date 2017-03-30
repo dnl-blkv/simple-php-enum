@@ -10,6 +10,13 @@ A simple C/C++ alike PHP library for Enums.
 The package is new and thus only supports PHP `>=7.0`.
 
 # How To Basic
+## Installation
+1. Install composer: https://getcomposer.org/doc/00-intro.md
+2. Open your project folder in terminal
+3. Enter `composer require dnl-blkv/simple-php-enum`
+4. Wait for the composer to finish the job
+5. Now, you can start using the Simple PHP Enums as described below!
+
 ## Defining Enums
 Defining a basic Enum with the package is straightforward:
 ```
@@ -30,7 +37,9 @@ class AnimalEnum extends AbstractEnum
 }
 ```
 
-Here, `null` means auto-determined ordinal value, or _auto-ordinal_. The default auto-ordinal is `0`. The further auto-ordinal values are determined as `{previous ordinal} + 1`.
+Here `null` means auto-determined ordinal value, or _auto-ordinal_. The default auto-ordinal is `0`. The further auto-ordinal values are determined as `{previous ordinal} + 1`.
+
+Constant names MUST be [PSR-1-compliant](http://www.php-fig.org/psr/psr-1/) AND start from a capital letter. If the constant name does not conform with the rules, an `InvalidEnumNameException` is thrown.
 
 ## Creating
 Once the class is defined defined, the enums can be created as:
@@ -47,6 +56,8 @@ Or:
 ```
 $animal = AnimalEnum::createFromOrdinal(0);
 ```
+
+In the examples above, if the name or the ordinal is not defined, exceptions will be thrown (`UndefinedEnumNameException` and `UndefinedEnumOrdinalException` correspondingly).
 
 ## Accessing
 You can access the name (string representation) and the ordinal (numeric representation) of the enum:
@@ -70,7 +81,7 @@ var_dump(SomeOtherEnum::VALUE()->isEqual(AnimalEnum::CAT())) // Outputs "bool(fa
 
 # How To Advanced
 ## Defining Enums with Custom Ordinals
-Besides letting the library to assign the ordinals automatically, you could assign custom values to the ordinals:
+Besides letting the library assign the ordinals automatically, you could manually assign custom integer values to the ordinals:
 ```
 use dnl_blkv\enum\AbstractEnum;
 
