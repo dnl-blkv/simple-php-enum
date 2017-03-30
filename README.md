@@ -132,7 +132,7 @@ echo BeerEnum::DEFAULT()->getName() . PHP_EOL; // Outputs "DEFAULT"
 echo BeerEnum::createFromName('DEFAULT')->getName() . PHP_EOL; // Outputs "DEFAULT"
 ```
 
-However, if you create it from an ordinal, the bahavior may seem tricky at a glance:
+However, if you create it from an ordinal, the behavior may seem tricky at a glance:
 ```
 echo BeerEnum::createFromOrdinal(0)->getName() . PHP_EOL; // Outputs "LAGER"
 ```
@@ -140,7 +140,7 @@ echo BeerEnum::createFromOrdinal(0)->getName() . PHP_EOL; // Outputs "LAGER"
 This happens because, when creating an enum from ordinal, the library always provides you with the first (in the order of definition) name corresponding to the ordinal.
 
 ## More Comparison
-The Simple PHP Enum library only creates each enum object once and then reuses it. Therefore, the enums are comparable with `===` or it's alias `isSame`. This kind comparison is stricter than `isEqual`. Whereas `isEqual` only accounts for the enum type and ordinal, `isSame` also takes the `name` into account:
+The Simple PHP Enum library only creates each enum object once and then reuses it. Therefore, the enums are comparable with `===` or its alias `isSame`. This kind comparison is stricter than `isEqual`. Whereas `isEqual` only accounts for the enum type and ordinal, `isSame` also takes the `name` into account:
 ```
 var_dump(BeerEnum::LAGER()->isEqual(BeerEnum::LAGER())); // Outputs "bool(true)"
 var_dump(BeerEnum::LAGER()->isEqual(BeerEnum::DEFAULT())); // Outputs "bool(true)"
