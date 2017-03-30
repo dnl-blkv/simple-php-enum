@@ -2,7 +2,7 @@
     "name": "dnl-blkv/simple-php-enum",
     "type": "library",
     "description": "A simple C/C++ alike enum library.",
-    "keywords": ["enum", "enumerated", "enumeration", "c", "c++"],
+    "keywords": ["enum", "enumerated", "enumeration", "c"],
     "homepage": "https://github.com/dnl-blkv/simple-php-enum",
     "license": "MIT",
     "authors": [
