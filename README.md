@@ -1,8 +1,6 @@
 Travis Info
 -----------
-<a href="https://travis-ci.org/dnl-blkv/simple-php-enum">
-<img src="https://travis-ci.org/dnl-blkv/simple-php-enum.svg?branch=master" alt="dnl-blkv/simple-php-enum - Travis CI"/>
-</a>
+[![Travis CI](https://travis-ci.org/dnl-blkv/simple-php-enum.svg?branch=master)](https://travis-ci.org/dnl-blkv/simple-php-enum)
 
 Simple PHP Enum
 ---------------
