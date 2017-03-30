@@ -11,7 +11,7 @@ The package is new and thus only supports PHP `>=7.0`.
 
 # How To Basic
 ## Installation
-1. Install composer: https://getcomposer.org/doc/00-intro.md
+1. [Install composer](https://getcomposer.org/doc/00-intro.md)
 2. Open your project folder in terminal
 3. Enter `composer require dnl-blkv/simple-php-enum`
 4. Wait for the composer to finish the job
