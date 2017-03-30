@@ -6,3 +6,5 @@ before_script: composer install
 addons:
   code_climate:
     repo_token: ac81f24ed24329b733b84841f9e33cbd79e5840205343e700b7e641e4226bda1
+after_success:
+  - vendor/bin/test-reporter
