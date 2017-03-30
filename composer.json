@@ -1,11 +1,15 @@
 {
-    "name": "dnl_blkv/enum",
+    "name": "dnl-blkv/simple-php-enum",
+    "type": "library",
     "description": "A simple C/C++ alike enum library.",
+    "keywords": ["enum", "enumerated", "enumeration", "c", "c++"],
+    "homepage": "https://github.com/dnl-blkv/simple-php-enum",
+    "license": "MIT",
     "authors": [
         {
             "name": "Daniil Belyakov",
             "email": "dnl.blkv@gmail.com",
-            "role": "Owner"
+            "role": "Developer"
         }
     ],
     "autoload": {
@@ -26,13 +30,9 @@
         }
     ],
     "require": {
-        "php": "^7.0"
+        "php": ">=7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.4",
-        "codeclimate/php-test-reporter": "dev-master"
-    },
-    "scripts": {
-
+        "phpunit/phpunit": "^5.4"
     }
 }
