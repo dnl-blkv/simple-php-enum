@@ -6,7 +6,7 @@ use dnl_blkv\enum\exception\UndefinedEnumOrdinalException;
 
 /**
  */
-interface Enum
+interface EnumInterface
 {
     /**
      * @param string $name
@@ -51,18 +51,18 @@ interface Enum
     /**
      * Enums are equal if they have the same class and ordinal value.
      *
-     * @param Enum $other
+     * @param EnumInterface $other
      *
      * @return bool
      */
-    public function isEqual(Enum $other): bool;
+    public function isEqual(EnumInterface $other): bool;
 
     /**
      * Enums are same if they have the same class, ordinal value and name.
      *
-     * @param Enum $other
+     * @param EnumInterface $other
      *
      * @return bool
      */
-    public function isSame(Enum $other): bool;
+    public function isSame(EnumInterface $other): bool;
 }

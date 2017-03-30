@@ -2,7 +2,7 @@
 
 namespace dnl_blkv\enum\test;
 
-use dnl_blkv\enum\EnumBase;
+use dnl_blkv\enum\AbstractEnum;
 
 /**
  * @method static static CAT()
@@ -10,7 +10,7 @@ use dnl_blkv\enum\EnumBase;
  * @method static static BIRD()
  * @method static static FISH()
  */
-class SimpleEnum extends EnumBase
+class SimpleEnum extends AbstractEnum
 {
     const CAT = null;
     const DOG = null;
