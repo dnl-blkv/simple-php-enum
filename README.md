@@ -5,6 +5,8 @@ A simple C/C++ alike PHP library for Enums.
 ## Stats and Health
 [![Travis CI](https://travis-ci.org/dnl-blkv/simple-php-enum.svg?branch=master)](https://travis-ci.org/dnl-blkv/simple-php-enum)
 [![codecov](https://codecov.io/gh/dnl-blkv/simple-php-enum/branch/master/graph/badge.svg)](https://codecov.io/gh/dnl-blkv/simple-php-enum)
+[![Latest Stable Version](https://poser.pugx.org/dnl-blkv/simple-php-enum/v/stable)](https://packagist.org/packages/dnl-blkv/simple-php-enum)
+[![License](https://poser.pugx.org/dnl-blkv/simple-php-enum/license)](https://packagist.org/packages/dnl-blkv/simple-php-enum)
 
 ## PHP Version Support
 The package is new and thus only supports PHP `>=7.0`.
