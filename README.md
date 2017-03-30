@@ -7,7 +7,7 @@ A simple C/C++ alike PHP library for Enums.
 [![codecov](https://codecov.io/gh/dnl-blkv/simple-php-enum/branch/master/graph/badge.svg)](https://codecov.io/gh/dnl-blkv/simple-php-enum)
 
 ## PHP Version Support
-The package is new and thus only supports PHP ^7.0.
+The package is new and thus only supports PHP `^7.0`.
 
 # How To Basic
 ## Defining Enums
@@ -30,10 +30,10 @@ class AnimalEnum extends AbstractEnum
 }
 ```
 
-Here, `null` means _auto-determined_ ordinal value. The default auto-ordinal is `0`. The further auto-ordinal values are determined as `{previous ordinal} + 1`.
+Here, `null` means auto-determined ordinal value, or _auto-ordinal_. The default auto-ordinal is `0`. The further auto-ordinal values are determined as `{previous ordinal} + 1`.
 
 ## Creating
-Once defined, the Enum can be created as:
+Once the class is defined defined, the enums can be created as:
 ```
 $animal = AnimalEnum::CAT();
 ```
@@ -63,7 +63,7 @@ $dog = AnimalEnum::DOG();
 var_dump($cat->isEqual($otherCat)) // Outputs "bool(true)"
 var_dump($cat->isEqual($dog)) // Outputs "bool(false)"
 ```
-Intuitively, two enums of different types are never equal. If we have an enum of type `SomeOtherEnum` with `const VALUE = 0;` then the following happens:
+Intuitively, two enums of different types are never equal. If we have an enum of type `SomeOtherEnum` with `const VALUE = 0;` then the following holds:
 ```
 var_dump(SomeOtherEnum::VALUE()->isEqual(AnimalEnum::CAT())) // Outputs "bool(false)"
 ```
@@ -107,6 +107,7 @@ use dnl_blkv\enum\AbstractEnum;
  * @method static static PORTER()
  * @method static static STOUT()
  * @method static static DEFAULT()
+ * @method static static AFTER_DEFAULT()
  */
 class BeerEnum extends AbstractEnum
 {
@@ -115,13 +116,14 @@ class BeerEnum extends AbstractEnum
     const PORTER = null;
     const STOUT = null;
     const DEFAULT = 0;
+    const AFTER_DEFAULT = null;
 }
 ```
 
 For the enum defined above, the following will hold:
 ```
 echo BeerEnum::DEFAULT()->getOrdinal() . PHP_EOL; // Outputs "0"
-var_dump(BeerEnum::LAGER()->isEqual(BeerEnum::DEFAULT())); // Outputs "bool(true)"
+echo BeerEnum::AFTER_DEFAULT()->getOrdinal() . PHP_EOL; // Outputs "1"
 ```
 
 If you are creating an enum with duplicate ordinal using a magic method or from name, it works as usual.
@@ -130,21 +132,21 @@ echo BeerEnum::DEFAULT()->getName() . PHP_EOL; // Outputs "DEFAULT"
 echo BeerEnum::createFromName('DEFAULT')->getName() . PHP_EOL; // Outputs "DEFAULT"
 ```
 
-However, if you create it from ordinal, the bahavior may seem tricky at a glance:
+However, if you create it from an ordinal, the bahavior may seem tricky at a glance:
 ```
 echo BeerEnum::createFromOrdinal(0)->getName() . PHP_EOL; // Outputs "LAGER"
 ```
 
-This happens because, when creating an enum from ordinal, the library always provides you with the first name corresponding to the ordinal.
+This happens because, when creating an enum from ordinal, the library always provides you with the first (in the order of definition) name corresponding to the ordinal.
 
 ## More Comparison
 The Simple PHP Enum library only creates each enum object once and then reuses it. Therefore, the enums are comparable with `===` or it's alias `isSame`. This kind comparison is stricter than `isEqual`. Whereas `isEqual` only accounts for the enum type and ordinal, `isSame` also takes the `name` into account:
 ```
 var_dump(BeerEnum::LAGER()->isEqual(BeerEnum::LAGER())); // Outputs "bool(true)"
-var_dump(BeerEnum::LAGER() === BeerEnum::LAGER()); // Outputs "bool(true)"
-var_dump(BeerEnum::LAGER()->isSame(BeerEnum::LAGER())); // Outputs "bool(true)"
 var_dump(BeerEnum::LAGER()->isEqual(BeerEnum::DEFAULT())); // Outputs "bool(true)"
+var_dump(BeerEnum::LAGER() === BeerEnum::LAGER()); // Outputs "bool(true)"
 var_dump(BeerEnum::LAGER() === BeerEnum::DEFAULT()); // Outputs "bool(false)"
+var_dump(BeerEnum::LAGER()->isSame(BeerEnum::LAGER())); // Outputs "bool(true)"
 var_dump(BeerEnum::LAGER()->isSame(BeerEnum::DEFAULT())); // Outputs "bool(false)"
 ```
 
