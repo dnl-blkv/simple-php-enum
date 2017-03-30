@@ -39,7 +39,7 @@ abstract class AbstractEnum implements EnumInterface
     /**
      * Default value for enum ordinal.
      */
-    const ORDINAL_DEFAULT = 0;
+    const __ORDINAL_DEFAULT = 0;
 
     /**
      * @var static[]
@@ -164,7 +164,7 @@ abstract class AbstractEnum implements EnumInterface
      */
     protected static function resetLastOrdinal()
     {
-        static::$lastOrdinal = self::ORDINAL_DEFAULT - 1;
+        static::$lastOrdinal = self::__ORDINAL_DEFAULT - 1;
     }
 
     /**
