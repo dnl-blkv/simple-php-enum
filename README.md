@@ -1,5 +1,5 @@
-Travis Info
------------
+ Stats and Health
+ ----------------
 [![Travis CI](https://travis-ci.org/dnl-blkv/simple-php-enum.svg?branch=master)](https://travis-ci.org/dnl-blkv/simple-php-enum)
 [![codecov](https://codecov.io/gh/dnl-blkv/simple-php-enum/branch/master/graph/badge.svg)](https://codecov.io/gh/dnl-blkv/simple-php-enum)
 
