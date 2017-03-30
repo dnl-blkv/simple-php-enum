@@ -1,10 +1,10 @@
 language: php
 php:
-  - '7.0'
-  - '7.1'
+- '7.0'
+- '7.1'
 before_script: composer install
-addons:
-  code_climate:
-    repo_token: ac81f24ed24329b733b84841f9e33cbd79e5840205343e700b7e641e4226bda1
 after_success:
-  - vendor/bin/test-reporter
+- vendor/bin/test-reporter
+env:
+  global:
+    secure: Dg4Yf+dXeAuBQy4kl6e/LQ3a3oa5PUzhkl7EGbwvL0lhOKi9xsabx97hYcZ4ulA79xZLDSYrWvhbKKrpqI023jHtUobtDqrq65/mQmvZiAtCp868wvhhX9mm52vDgnmLvDllBC+Y8RhAPPgUgffF49iYjnfuT2yyt07krKS1zyZxu0c+gEYqMid3tXQ80ZEq7ha1jxZ7AMej9dgM/os1qjNh5ng7hzl9RI9s/0z9YuGMdjHfIoIljy+ewnZF0YpaqEsId+K7A1NnjUtnS4rYaT/xwzsclS0pzo2Vy2doUpLO4nKphYNy/53vIo+6EHHaaLUfrqSu1oJjPJS1+fa/5L/PM7yNOPGNdzbkjR39xOJKtj7IP+rzQx7BJH2SZrCVV8gv98OHSe2fgx/znIw9oPnHLZglMWUDruXIpGsqNMoFBmndiKJBCDheufirq/3tlDgDI+BI2CayDUF+gVEnYw1z+MrgFXT1mCUnddE5A6z1wEgLPqaCb5fHPWqq5wrEUM0AREIH19PvTOQNQf6jXGYW7zijlPB5nrzHw9fIgq9Hw4AitAhUyHBzK9DXjVHb3YixnxUZ+el/zrtitK3q9yatgnQeyeuicGrGTMxyhu/nG4jdfgJPjfyLnllq0i0Yf/cgK6M3YBEXC+sKY4+Eg02T+/b7yyZ43arAZ6RnNU4=
