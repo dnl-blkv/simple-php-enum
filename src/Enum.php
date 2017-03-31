@@ -23,7 +23,7 @@ use ReflectionClass;
  * @example const DOG = null;
  * @example const BIRD = 3;
  */
-abstract class AbstractEnum implements EnumInterface
+abstract class Enum
 {
     /**
      * Error constants.
@@ -270,11 +270,11 @@ abstract class AbstractEnum implements EnumInterface
     }
 
     /**
-     * @param EnumInterface $other
+     * @param Enum $other
      *
      * @return bool
      */
-    public function isSame(EnumInterface $other): bool
+    public function isSame(Enum $other): bool
     {
         return $this === $other;
     }
@@ -337,11 +337,11 @@ abstract class AbstractEnum implements EnumInterface
     }
 
     /**
-     * @param EnumInterface $other
+     * @param Enum $other
      *
      * @return bool
      */
-    public function isEqual(EnumInterface $other): bool
+    public function isEqual(Enum $other): bool
     {
         return $this->getOrdinal() === $other->getOrdinal() && static::class === get_class($other);
     }

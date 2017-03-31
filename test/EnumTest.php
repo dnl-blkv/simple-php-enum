@@ -1,7 +1,7 @@
 <?php
 namespace dnl_blkv\enum\test;
 
-use dnl_blkv\enum\EnumInterface;
+use dnl_blkv\enum\Enum;
 use PHPUnit\Framework\TestCase;
 use BadMethodCallException;
 use InvalidArgumentException;
@@ -156,13 +156,13 @@ TEXT;
     }
 
     /**
-     * @param EnumInterface $one
-     * @param EnumInterface $other
+     * @param Enum $one
+     * @param Enum $other
      * @param bool $resultExpected
      *
      * @dataProvider enumPairProviderIsEqualCheck
      */
-    public function testCanCheckIsEqual(EnumInterface $one, EnumInterface $other, bool $resultExpected)
+    public function testCanCheckIsEqual(Enum $one, Enum $other, bool $resultExpected)
     {
         self::assertEquals($resultExpected, $one->isEqual($other));
     }
@@ -181,13 +181,13 @@ TEXT;
     }
 
     /**
-     * @param EnumInterface $one
-     * @param EnumInterface $other
+     * @param Enum $one
+     * @param Enum $other
      * @param bool $resultExpected
      *
      * @dataProvider enumPairProviderIsSameCheck
      */
-    public function testCanCheckIsSame(EnumInterface $one, EnumInterface $other, bool $resultExpected)
+    public function testCanCheckIsSame(Enum $one, Enum $other, bool $resultExpected)
     {
         self::assertEquals($resultExpected, $one->isSame($other));
     }
