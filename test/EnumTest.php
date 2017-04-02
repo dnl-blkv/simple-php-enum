@@ -148,11 +148,17 @@ TEXT;
     }
 
     /**
-     * @expectedException \dnl_blkv\enum\exception\InvalidEnumNameException
      */
-    public function testCanNotCreateEnumIfWrongNamePresent()
+    public function testCanCreateEnumIfIgnoredNamePresent()
     {
-        EnumWithInvalidConstantName::VALID_NAME();
+        static::assertTrue(EnumWithIgnoredConstantName::isNameDefined('VALID_NAME'));
+    }
+
+    /**
+     */
+    public function testCanNotCreateEnumWithIgnoredName()
+    {
+        static::assertFalse(EnumWithIgnoredConstantName::isNameDefined('_IGNORED_NAME'));
     }
 
     /**

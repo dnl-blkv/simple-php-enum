@@ -41,7 +41,7 @@ class AnimalEnum extends AbstractEnum
 
 Here `null` means auto-determined ordinal value, or _auto-ordinal_. The default auto-ordinal is `0`. The further auto-ordinal values are determined as `{previous ordinal} + 1`.
 
-Constant names MUST be [PSR-1-compliant](http://www.php-fig.org/psr/psr-1/) AND start from a capital letter. If the constant name does not conform with the rules, an `InvalidEnumNameException` is thrown.
+Constant names MUST be [PSR-1-compliant](http://www.php-fig.org/psr/psr-1/) AND start from a capital letter. If the constant name does not conform with the rules, it is ignored.
 
 ## Creating
 Once the class is defined defined, the enums can be created as:

@@ -151,8 +151,7 @@ abstract class Enum
         $nameToOrdinalMap = [];
 
         foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
-            if (static::isEnumConstant($name)) {
-                static::assertValidEnumConstantName($name);
+            if (static::isValidEnumConstant($name)) {
                 $nameToOrdinalMap[$name] = new static($name, static::getNextOrdinal($constantValue));
             }
         }
@@ -180,6 +179,16 @@ abstract class Enum
      *
      * @return bool
      */
+    protected static function isValidEnumConstant(string $name): bool
+    {
+        return static::isEnumConstant($name) && static::isValidEnumConstantName($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
     protected static function isEnumConstant(string $name): bool
     {
         return !static::isSelfDefinedConstant($name);
@@ -193,18 +202,6 @@ abstract class Enum
     protected static function isSelfDefinedConstant(string $name): bool
     {
         return defined(self::__PREFIX_SELF_DEFINED_CONSTANT_ACCESS . $name);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @throws InvalidEnumNameException When the constant name is invalid.
-     */
-    protected static function assertValidEnumConstantName(string $name)
-    {
-        if (!static::isValidEnumConstantName($name)) {
-            throw new InvalidEnumNameException($name);
-        }
     }
 
     /**
