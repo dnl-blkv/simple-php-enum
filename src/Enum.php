@@ -267,11 +267,7 @@ abstract class Enum
      */
     protected static function getNextOrdinal(int $constantValue = null): int
     {
-        if (is_null($constantValue)) {
-            return static::$lastOrdinal + 1;
-        } else {
-            return $constantValue;
-        }
+        return is_null($constantValue) ? static::$lastOrdinal + 1 : $constantValue;
     }
 
     /**
