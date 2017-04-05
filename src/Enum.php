@@ -2,7 +2,6 @@
 
 namespace dnl_blkv\enum;
 
-use dnl_blkv\enum\exception\InvalidEnumNameException;
 use dnl_blkv\enum\exception\UndefinedEnumNameException;
 use dnl_blkv\enum\exception\UndefinedEnumOrdinalException;
 use InvalidArgumentException;
@@ -166,7 +165,7 @@ abstract class Enum
 
         static::resetLastOrdinal();
 
-        foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
+        foreach (static::getConstants() as $name => $constantValue) {
             if (static::isValidEnumConstant($name)) {
                 $nextOrdinal = static::getNextOrdinal($constantValue);
                 $nameToOrdinalMap[$name] = new static($name, $nextOrdinal);
@@ -175,6 +174,15 @@ abstract class Enum
         }
 
         return $nameToOrdinalMap;
+    }
+
+    /**
+     * @return mixed[]
+     * ]
+     */
+    protected static function getConstants(): array
+    {
+        return static::createSelfReflection()->getConstants();
     }
 
     /**
