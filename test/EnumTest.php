@@ -23,7 +23,7 @@ TEXT;
 
     /**
      */
-    public function testCanCreateEnumWithMagicMethod()
+    public function testCanGetEnumWithMagicMethod()
     {
         static::assertEquals(SimpleEnum::class, get_class(SimpleEnum::CAT()));
     }
@@ -31,69 +31,82 @@ TEXT;
     /**
      * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
      */
-    public function testCanNotCreateEnumWithMagicMethodForUndefinedConstant()
+    public function testCanNotGetEnumWithMagicMethodForUndefinedConstant()
     {
         SimpleEnum::SCAT();
     }
 
     /**
      */
-    public function testCanCreateEnumFromName()
+    public function testCanGetEnumByName()
     {
-        static::assertEquals(SimpleEnum::DOG(), SimpleEnum::createFromName('DOG'));
+        static::assertEquals(SimpleEnum::DOG(), SimpleEnum::getByName('DOG'));
     }
 
     /**
      * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
      */
-    public function testCanNotCreateEnumFromUndefinedName()
+    public function testCanNotGetEnumByUndefinedName()
     {
-        SimpleEnum::createFromName('SCAT');
+        SimpleEnum::getByName('SCAT');
     }
 
     /**
      * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
      */
-    public function testCanNotCreateEnumFromNameOfInternalConstant()
+    public function testCanNotGetEnumByNameOfInternalConstant()
     {
-        SimpleEnum::createFromName('__SOME_INTERNAL_CONSTANT');
+        SimpleEnum::getByName('__SOME_INTERNAL_CONSTANT');
     }
 
     /**
      */
-    public function testCanCreateEnumFromOrdinal()
+    public function testCanGetEnumByOrdinal()
     {
-        static::assertEquals(SimpleEnum::DOG(), SimpleEnum::createFromOrdinal(1));
+        static::assertEquals(SimpleEnum::DOG(), SimpleEnum::getFirstByOrdinal(1));
     }
 
     /**
      */
-    public function testCanCreateEnumFromCustomOrdinal()
+    public function testCanGetAllEnumsByOrdinal()
     {
-        static::assertEquals(SimpleEnum::BIRD(), SimpleEnum::createFromOrdinal(3));
+        static::assertEquals(
+            [
+                EnumWithDuplicatedOrdinal::CAT(),
+                EnumWithDuplicatedOrdinal::DEFAULT(),
+            ],
+            EnumWithDuplicatedOrdinal::getAllByOrdinal(0)
+        );
+    }
+
+    /**
+     */
+    public function testCanGetEnumByCustomOrdinal()
+    {
+        static::assertEquals(SimpleEnum::BIRD(), SimpleEnum::getFirstByOrdinal(3));
     }
 
     /**
      * @expectedException \dnl_blkv\enum\exception\UndefinedEnumOrdinalException
      */
-    public function testCanNotCreateEnumFromUndefinedOrdinal()
+    public function testCanNotGetEnumByUndefinedOrdinal()
     {
-        SimpleEnum::createFromOrdinal(20);
+        SimpleEnum::getFirstByOrdinal(20);
     }
 
     /**
      */
     public function testCanCheckEnumNameIsDefined()
     {
-        self::assertTrue(SimpleEnum::isNameDefined('FISH'));
+        static::assertTrue(SimpleEnum::isNameDefined('FISH'));
     }
 
     /**
      */
     public function testCanCheckEnumNameIsNotDefined()
     {
-        self::assertFalse(SimpleEnum::isNameDefined('GISH'));
-        self::assertFalse(SimpleEnum::isNameDefined('__SOME_INTERNAL_CONSTANT'));
+        static::assertFalse(SimpleEnum::isNameDefined('GISH'));
+        static::assertFalse(SimpleEnum::isNameDefined('__SOME_INTERNAL_CONSTANT'));
     }
 
     /**
@@ -107,14 +120,14 @@ TEXT;
      */
     public function testCanCheckEnumOrdinalIsDefined()
     {
-        self::assertTrue(SimpleEnum::isOrdinalDefined(1));
+        static::assertTrue(SimpleEnum::isOrdinalDefined(1));
     }
 
     /**
      */
     public function testCanCheckEnumOrdinalIsNotDefined()
     {
-        self::assertFalse(SimpleEnum::isOrdinalDefined(5));
+        static::assertFalse(SimpleEnum::isOrdinalDefined(5));
     }
 
     /**
@@ -128,7 +141,7 @@ TEXT;
      */
     public function testCanConvertToString()
     {
-        static::assertEquals(self::EXPECTED_RESULT_SIMPLE_ENUM_FISH_AS_STRING, strval(SimpleEnum::FISH()));
+        static::assertEquals(static::EXPECTED_RESULT_SIMPLE_ENUM_FISH_AS_STRING, strval(SimpleEnum::FISH()));
     }
 
     /**
@@ -149,14 +162,14 @@ TEXT;
 
     /**
      */
-    public function testCanCreateEnumIfIgnoredNamePresent()
+    public function testCanGetEnumIfIgnoredNamePresent()
     {
         static::assertTrue(EnumWithIgnoredConstantName::isNameDefined('VALID_NAME'));
     }
 
     /**
      */
-    public function testCanNotCreateEnumWithIgnoredName()
+    public function testCanNotGetEnumWithIgnoredName()
     {
         static::assertFalse(EnumWithIgnoredConstantName::isNameDefined('_IGNORED_NAME'));
     }
@@ -170,7 +183,7 @@ TEXT;
      */
     public function testCanCheckIsEqual(Enum $one, Enum $other, bool $resultExpected)
     {
-        self::assertEquals($resultExpected, $one->isEqual($other));
+        static::assertEquals($resultExpected, $one->isEqual($other));
     }
 
     /**
@@ -195,7 +208,7 @@ TEXT;
      */
     public function testCanCheckIsSame(Enum $one, Enum $other, bool $resultExpected)
     {
-        self::assertEquals($resultExpected, $one->isSame($other));
+        static::assertEquals($resultExpected, $one->isSame($other));
     }
 
     /**
@@ -213,11 +226,139 @@ TEXT;
 
     /**
      */
-    public static function testCanCreateFromDuplicateOrdinal()
+    public function testCanCreateFromDuplicateOrdinal()
     {
         $defaultEnumOrdinal = EnumWithDuplicatedOrdinal::DEFAULT()->getOrdinal();
-        $catEnum = OtherSimpleEnum::createFromOrdinal($defaultEnumOrdinal);
+        $catEnum = OtherSimpleEnum::getFirstByOrdinal($defaultEnumOrdinal);
 
-        self::assertTrue(OtherSimpleEnum::CAT()->isSame($catEnum));
+        static::assertTrue(OtherSimpleEnum::CAT()->isSame($catEnum));
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsLessCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsLess(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, $one->isLess($other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsLessCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), true],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), false],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), false],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsLess()
+    {
+        AccessLevelEnum::ADMIN()->isLess(SimpleEnum::CAT());
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsLessOrEqualCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsLessOrEqual(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, $one->isLessOrEqual($other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsLessOrEqualCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), true],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), true],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), false],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsLessOrEqual()
+    {
+        AccessLevelEnum::ADMIN()->isLessOrEqual(SimpleEnum::CAT());
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsGreaterCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsGreater(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, $one->isGreater($other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsGreaterCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), false],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), false],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), true],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsGreater()
+    {
+        AccessLevelEnum::ADMIN()->isGreater(SimpleEnum::CAT());
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsGreaterOrEqualCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsGreaterOrEqual(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, $one->isGreaterOrEqual($other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsGreaterOrEqualCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), false],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), true],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), true],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsGreaterOrEqual()
+    {
+        AccessLevelEnum::ADMIN()->isGreaterOrEqual(SimpleEnum::CAT());
     }
 }

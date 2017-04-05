@@ -30,6 +30,7 @@ abstract class Enum
      */
     const __ERROR_METHOD_NOT_FOUND = 'Method not found in "%s": "%s".';
     const __ERROR_ARGUMENTS_NOT_EMPTY = 'Enum instantiation methods do not accept arguments.';
+    const __ERROR_COMPARING_TO_OTHER_TYPE = 'Only enums of the same type can be compared with %s method.';
 
     /**
      * The prefix we use to access a constant which is defined in "self".
@@ -82,7 +83,18 @@ abstract class Enum
      * @return static
      * @throws UndefinedEnumOrdinalException When the enum ordinal is undefined.
      */
-    public static function createFromOrdinal(int $ordinal)
+    public static function getFirstByOrdinal(int $ordinal)
+    {
+        return static::getAllByOrdinal($ordinal)[0];
+    }
+
+    /**
+     * @param int $ordinal
+     *
+     * @return static
+     * @throws UndefinedEnumOrdinalException When the enum ordinal is undefined.
+     */
+    public static function getAllByOrdinal(int $ordinal)
     {
         if (static::isOrdinalDefined($ordinal)) {
             return static::getOrdinalToInstanceMap()[$ordinal];
@@ -121,9 +133,13 @@ abstract class Enum
         $ordinalToInstanceMap = [];
 
         foreach (static::getNameToInstanceMap() as $instance) {
-            if (!isset($ordinalToInstanceMap[$instance->getOrdinal()])) {
-                $ordinalToInstanceMap[$instance->getOrdinal()] = $instance;
+            $ordinal = $instance->getOrdinal();
+
+            if (!isset($ordinalToInstanceMap[$ordinal])) {
+                $ordinalToInstanceMap[$ordinal] = [];
             }
+
+            $ordinalToInstanceMap[$ordinal][] = $instance;
         }
 
         return $ordinalToInstanceMap;
@@ -288,7 +304,7 @@ abstract class Enum
         if (static::isValidEnumConstantName($name)) {
             static::assertArgumentsEmpty($arguments);
 
-            return static::createFromName($name);
+            return static::getByName($name);
         } else {
             throw new BadMethodCallException(
                 sprintf(self::__ERROR_METHOD_NOT_FOUND, static::class, $name)
@@ -314,7 +330,7 @@ abstract class Enum
      * @return static
      * @throws UndefinedEnumNameException When the name does not correspond to an existing enum type.
      */
-    public static function createFromName(string $name)
+    public static function getByName(string $name)
     {
         if (static::isNameDefined($name)) {
             return static::getNameToInstanceMap()[$name];
@@ -340,7 +356,75 @@ abstract class Enum
      */
     public function isEqual(Enum $other): bool
     {
-        return $this->getOrdinal() === $other->getOrdinal() && static::class === get_class($other);
+        return $this->getOrdinal() === $other->getOrdinal() && $this->isSameTypeAsThis($other);
+    }
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    protected function isSameTypeAsThis(Enum $other): bool
+    {
+        return static::class === get_class($other);
+    }
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    public function isLess(Enum $other): bool
+    {
+        $this->assertSameTypeAsThis($other);
+
+        return $this->getOrdinal() < $other->getOrdinal();
+    }
+
+    /**
+     * @param Enum $other
+     */
+    protected function assertSameTypeAsThis(Enum $other)
+    {
+        if (!$this->isSameTypeAsThis($other)) {
+            throw new InvalidArgumentException(sprintf(self::__ERROR_COMPARING_TO_OTHER_TYPE, __METHOD__));
+        }
+    }
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    public function isLessOrEqual(Enum $other): bool
+    {
+        $this->assertSameTypeAsThis($other);
+
+        return $this->getOrdinal() <= $other->getOrdinal();
+    }
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    public function isGreater(Enum $other): bool
+    {
+        $this->assertSameTypeAsThis($other);
+
+        return $this->getOrdinal() > $other->getOrdinal();
+    }
+
+    /**
+     * @param Enum $other
+     *
+     * @return bool
+     */
+    public function isGreaterOrEqual(Enum $other): bool
+    {
+        $this->assertSameTypeAsThis($other);
+
+        return $this->getOrdinal() >= $other->getOrdinal();
     }
 
     /**

@@ -44,19 +44,19 @@ Here `null` means auto-determined ordinal value, or _auto-ordinal_. The default 
 Enum constant names MUST be [PSR-1-compliant](http://www.php-fig.org/psr/psr-1/) AND start from a capital letter. If a constant name does not conform with the rules, the constant is ignored.
 
 ## Creating
-Once the class is defined defined, the enums can be created as:
+Once the class is defined, the enums can be acquired as:
 ```
 $animal = AnimalEnum::CAT();
 ```
 
 Or:
 ```
-$animal = AnimalEnum::createFromName('CAT');
+$animal = AnimalEnum::getByName('CAT');
 ```
 
 Or:
 ```
-$animal = AnimalEnum::createFromOrdinal(0);
+$animal = AnimalEnum::getByOrdinal(0);
 ```
 
 In the examples above, if the name or the ordinal is not defined, exceptions will be thrown (`UndefinedEnumNameException` and `UndefinedEnumOrdinalException` correspondingly).
@@ -68,7 +68,8 @@ echo $animal->getName() . ' ' . $animal->getOrdinal(); // Outputs "CAT 0"
 ```
 
 ## Comparison
-The enums can be compared as such:
+### Equality
+The enums can be checked for equality as such:
 ```
 $cat = AnimalEnum::CAT();
 $otherCat = AnimalEnum::CAT();
@@ -80,6 +81,28 @@ Intuitively, two enums of different types are never equal. If we have an enum of
 ```
 var_dump(SomeOtherEnum::VALUE()->isEqual(AnimalEnum::CAT())) // Outputs "bool(false)"
 ```
+
+It is also possible to compare the Simple PHP Enums by their ordinal value. There are four methods defined for this, as shown below:
+```
+/**
+ * @method static static READ()
+ * @method static static WRITE()
+ * @method static static ADMIN()
+ */
+class AccessLevelEnum extends Enum
+{
+    const READ = null;
+    const WRITE = null;
+    const ADMIN = null;
+}
+
+var_dump(AccessLevelEnum::READ()->isLess(AccessLevelEnum::WRITE())) . PHP_EOL // Outputs "bool(true)"
+var_dump(AccessLevelEnum::READ()->isGreater(AccessLevelEnum::WRITE())) . PHP_EOL // Outputs "bool(false)"
+var_dump(AccessLevelEnum::READ()->isGreaterOrEqual(AccessLevelEnum::READ())) . PHP_EOL // Outputs "bool(true)"
+var_dump(AccessLevelEnum::READ()->isLessOrEqual(AccessLevelEnum::ADMIN())) . PHP_EOL // Outputs "bool(true)"
+```
+
+If two enums of different types are compared, the `InvalidArgumentException` is thrown.
 
 # How To Advanced
 ## Defining Enums with Custom Ordinals
@@ -139,18 +162,19 @@ echo BeerEnum::DEFAULT()->getOrdinal() . PHP_EOL; // Outputs "0"
 echo BeerEnum::AFTER_DEFAULT()->getOrdinal() . PHP_EOL; // Outputs "1"
 ```
 
-If you are creating an enum with duplicate ordinal using a magic method or from name, it works as usual.
+If you are getting an enum with duplicate ordinal using a magic method or by name, it works as usual.
 ```
 echo BeerEnum::DEFAULT()->getName() . PHP_EOL; // Outputs "DEFAULT"
-echo BeerEnum::createFromName('DEFAULT')->getName() . PHP_EOL; // Outputs "DEFAULT"
+echo BeerEnum::getByName('DEFAULT')->getName() . PHP_EOL; // Outputs "DEFAULT"
 ```
 
-However, if you create it from an ordinal, the behavior may seem tricky at a glance:
+However, if you get it by an ordinal, the behavior is slightly different, and you have two options as shown below:
 ```
-echo BeerEnum::createFromOrdinal(0)->getName() . PHP_EOL; // Outputs "LAGER"
+echo BeerEnum::getFirstByOrdinal(0)->getName() . PHP_EOL; // Outputs "LAGER"
+$allEnumWithOrdinalZero = BeerEnum::getAllByOrdinal(0);
+echo $allEnumWithOrdinalZero[0]->getName() . PHP_EOL; // Outputs "LAGER"
+echo $allEnumWithOrdinalZero[1]->getName() . PHP_EOL; // Outputs "DEFAULT"
 ```
-
-This happens because, when creating an enum from ordinal, the library always provides you with the first (in the order of definition) name corresponding to the ordinal.
 
 ## More Comparison
 The Simple PHP Enum library only creates each enum object once and then reuses it. Therefore, the enums are comparable with `===` or its alias `isSame`. This kind comparison is stricter than `isEqual`. Whereas `isEqual` only accounts for the enum type and ordinal, `isSame` also takes the `name` into account:
@@ -164,7 +188,7 @@ var_dump(BeerEnum::LAGER()->isSame(BeerEnum::DEFAULT())); // Outputs "bool(false
 ```
 
 ## Checking Existence of Names and Ordinals
-If you wish to check whether or not certain enum type has a name or an ordinal, there are methods allowing you to easily do so:
+If you wish to check whether or not certain enum type has a given name or ordinal, there are methods allowing you to easily do so:
 ```
 var_dump(BeerEnum::isNameDefined('STOUT')) // Outputs "bool(true)";
 var_dump(BeerEnum::isNameDefined('VODKA')) // Outputs "bool(false)";
