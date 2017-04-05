@@ -82,7 +82,8 @@ Intuitively, two enums of different types are never equal. If we have an enum of
 var_dump(SomeOtherEnum::VALUE()->isEqual(AnimalEnum::CAT())) // Outputs "bool(false)"
 ```
 
-It is also possible to compare the Simple PHP Enums by their ordinal value. There are four methods defined for this, as shown below:
+### Comparison by Ordinal
+It is also possible to compare the Simple PHP Enums by their ordinal values. There are four methods defined for this, as shown below:
 ```
 /**
  * @method static static READ()
@@ -96,10 +97,10 @@ class AccessLevelEnum extends Enum
     const ADMIN = null;
 }
 
-var_dump(AccessLevelEnum::READ()->isLess(AccessLevelEnum::WRITE())) . PHP_EOL // Outputs "bool(true)"
-var_dump(AccessLevelEnum::READ()->isGreater(AccessLevelEnum::WRITE())) . PHP_EOL // Outputs "bool(false)"
-var_dump(AccessLevelEnum::READ()->isGreaterOrEqual(AccessLevelEnum::READ())) . PHP_EOL // Outputs "bool(true)"
-var_dump(AccessLevelEnum::READ()->isLessOrEqual(AccessLevelEnum::ADMIN())) . PHP_EOL // Outputs "bool(true)"
+var_dump(AccessLevelEnum::READ()->isLess(AccessLevelEnum::WRITE())) . PHP_EOL // -> "bool(true)"
+var_dump(AccessLevelEnum::READ()->isGreater(AccessLevelEnum::WRITE())) . PHP_EOL // -> "bool(false)"
+var_dump(AccessLevelEnum::READ()->isGreaterOrEqual(AccessLevelEnum::READ())) . PHP_EOL // -> "bool(true)"
+var_dump(AccessLevelEnum::READ()->isLessOrEqual(AccessLevelEnum::ADMIN())) . PHP_EOL // -> "bool(true)"
 ```
 
 If two enums of different types are compared, the `InvalidArgumentException` is thrown.
