@@ -162,13 +162,15 @@ abstract class Enum
      */
     protected static function createNameToInstanceMap(): array
     {
-        static::resetLastOrdinal();
-
         $nameToOrdinalMap = [];
+
+        static::resetLastOrdinal();
 
         foreach (static::createSelfReflection()->getConstants() as $name => $constantValue) {
             if (static::isValidEnumConstant($name)) {
-                $nameToOrdinalMap[$name] = new static($name, static::getNextOrdinal($constantValue));
+                $nextOrdinal = static::getNextOrdinal($constantValue);
+                $nameToOrdinalMap[$name] = new static($name, $nextOrdinal);
+                static::updateLastOrdinal($nextOrdinal);
             }
         }
 
@@ -258,12 +260,18 @@ abstract class Enum
     protected static function getNextOrdinal(int $constantValue = null): int
     {
         if (is_null($constantValue)) {
-            static::$lastOrdinal++;
+            return static::$lastOrdinal + 1;
         } else {
-            static::$lastOrdinal = $constantValue;
+            return $constantValue;
         }
+    }
 
-        return static::$lastOrdinal;
+    /**
+     * @param int $lastOrdinalNew
+     */
+    protected static function updateLastOrdinal(int $lastOrdinalNew)
+    {
+        static::$lastOrdinal = $lastOrdinalNew;
     }
 
     /**
