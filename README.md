@@ -177,7 +177,7 @@ echo $allEnumWithOrdinalZero[0]->getName() . PHP_EOL; // Outputs "LAGER"
 echo $allEnumWithOrdinalZero[1]->getName() . PHP_EOL; // Outputs "DEFAULT"
 ```
 
-## More Comparison
+## More Equality
 The Simple PHP Enum library only creates each enum object once and then reuses it. Therefore, the enums are comparable with `===` or its alias `isSame`. This kind comparison is stricter than `isEqual`. Whereas `isEqual` only accounts for the enum type and ordinal, `isSame` also takes the `name` into account:
 ```
 var_dump(BeerEnum::LAGER()->isEqual(BeerEnum::LAGER())); // Outputs "bool(true)"
