@@ -52,14 +52,6 @@ TEXT;
     }
 
     /**
-     * @expectedException \dnl_blkv\enum\exception\UndefinedEnumNameException
-     */
-    public function testCanNotGetEnumByNameOfInternalConstant()
-    {
-        SimpleEnum::getByName('__SOME_INTERNAL_CONSTANT');
-    }
-
-    /**
      */
     public function testCanGetEnumByOrdinal()
     {
@@ -95,18 +87,26 @@ TEXT;
     }
 
     /**
+     * @param string $name
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumNameProviderIsNameDefinedCheck
      */
-    public function testCanCheckEnumNameIsDefined()
+    public function testCanCheckEnumNameIsDefined(string $name, bool $resultExpected)
     {
-        static::assertTrue(SimpleEnum::isNameDefined('FISH'));
+        static::assertEquals($resultExpected, EnumWithIgnoredConstantName::isNameDefined($name));
     }
 
     /**
+     * @return mixed[]
      */
-    public function testCanCheckEnumNameIsNotDefined()
+    public static function enumNameProviderIsNameDefinedCheck()
     {
-        static::assertFalse(SimpleEnum::isNameDefined('GISH'));
-        static::assertFalse(SimpleEnum::isNameDefined('__SOME_INTERNAL_CONSTANT'));
+        return [
+            ['VALID_NAME', true],
+            ['INVALID_NAME', false],
+            ['_IGNORED_NAME', false],
+        ];
     }
 
     /**
@@ -117,17 +117,25 @@ TEXT;
     }
 
     /**
+     * @param int $ordinal
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumNameProviderIsOrdinalDefinedCheck
      */
-    public function testCanCheckEnumOrdinalIsDefined()
+    public function testCanCheckEnumOrdinalIsDefined(int $ordinal, bool $resultExpected)
     {
-        static::assertTrue(SimpleEnum::isOrdinalDefined(1));
+        static::assertEquals($resultExpected, SimpleEnum::isOrdinalDefined($ordinal));
     }
 
     /**
+     * @return mixed[]
      */
-    public function testCanCheckEnumOrdinalIsNotDefined()
+    public static function enumNameProviderIsOrdinalDefinedCheck()
     {
-        static::assertFalse(SimpleEnum::isOrdinalDefined(5));
+        return [
+            [1, true],
+            [5, false],
+        ];
     }
 
     /**
@@ -158,20 +166,6 @@ TEXT;
     public function testCanNotCallMagicEnumMethodWithArguments()
     {
         SimpleEnum::FISH(true);
-    }
-
-    /**
-     */
-    public function testCanGetEnumIfIgnoredNamePresent()
-    {
-        static::assertTrue(EnumWithIgnoredConstantName::isNameDefined('VALID_NAME'));
-    }
-
-    /**
-     */
-    public function testCanNotGetEnumWithIgnoredName()
-    {
-        static::assertFalse(EnumWithIgnoredConstantName::isNameDefined('_IGNORED_NAME'));
     }
 
     /**
