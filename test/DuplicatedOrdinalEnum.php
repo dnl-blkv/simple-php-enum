@@ -11,7 +11,7 @@ use dnl_blkv\enum\Enum;
  * @method static static FISH()
  * @method static static DEFAULT()
  */
-class EnumWithDuplicatedOrdinal extends Enum
+class DuplicatedOrdinalEnum extends Enum
 {
     const CAT = null;
     const DOG = null;

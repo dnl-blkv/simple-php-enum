@@ -22,6 +22,51 @@ class EnumTest extends TestCase
 TEXT;
 
     /**
+     * @param string $name
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumNameProviderIsNameDefinedCheckWithIgnoredConstant
+     */
+    public function testCanCheckIsNameDefinedWithIgnoredConstant(string $name, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, IgnoredConstantNameEnum::isNameDefined($name));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumNameProviderIsNameDefinedCheckWithIgnoredConstant()
+    {
+        return [
+            ['VALID_NAME', true],
+            ['INVALID_NAME', false],
+            ['_IGNORED_NAME', false],
+        ];
+    }
+
+    /**
+     * @param int $ordinal
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumNameProviderIsOrdinalDefinedCheck
+     */
+    public function testCanCheckEnumOrdinalIsDefined(int $ordinal, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, SimpleEnum::isOrdinalDefined($ordinal));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumNameProviderIsOrdinalDefinedCheck()
+    {
+        return [
+            [1, true],
+            [5, false],
+        ];
+    }
+
+    /**
      */
     public function testCanGetEnumWithMagicMethod()
     {
@@ -60,22 +105,22 @@ TEXT;
 
     /**
      */
-    public function testCanGetAllEnumsByOrdinal()
+    public function testCanGetEnumByCustomOrdinal()
     {
-        static::assertEquals(
-            [
-                EnumWithDuplicatedOrdinal::CAT(),
-                EnumWithDuplicatedOrdinal::DEFAULT(),
-            ],
-            EnumWithDuplicatedOrdinal::getAllByOrdinal(0)
-        );
+        static::assertEquals(SimpleEnum::BIRD(), SimpleEnum::getFirstByOrdinal(3));
     }
 
     /**
      */
-    public function testCanGetEnumByCustomOrdinal()
+    public function testCanGetAllEnumsByOrdinal()
     {
-        static::assertEquals(SimpleEnum::BIRD(), SimpleEnum::getFirstByOrdinal(3));
+        static::assertEquals(
+            [
+                DuplicatedOrdinalEnum::CAT(),
+                DuplicatedOrdinalEnum::DEFAULT(),
+            ],
+            DuplicatedOrdinalEnum::getAllByOrdinal(0)
+        );
     }
 
     /**
@@ -87,55 +132,10 @@ TEXT;
     }
 
     /**
-     * @param string $name
-     * @param bool $resultExpected
-     *
-     * @dataProvider enumNameProviderIsNameDefinedCheck
-     */
-    public function testCanCheckEnumNameIsDefined(string $name, bool $resultExpected)
-    {
-        static::assertEquals($resultExpected, EnumWithIgnoredConstantName::isNameDefined($name));
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public static function enumNameProviderIsNameDefinedCheck()
-    {
-        return [
-            ['VALID_NAME', true],
-            ['INVALID_NAME', false],
-            ['_IGNORED_NAME', false],
-        ];
-    }
-
-    /**
      */
     public function testCanGetName()
     {
         static::assertEquals('FISH', SimpleEnum::FISH()->getName());
-    }
-
-    /**
-     * @param int $ordinal
-     * @param bool $resultExpected
-     *
-     * @dataProvider enumNameProviderIsOrdinalDefinedCheck
-     */
-    public function testCanCheckEnumOrdinalIsDefined(int $ordinal, bool $resultExpected)
-    {
-        static::assertEquals($resultExpected, SimpleEnum::isOrdinalDefined($ordinal));
-    }
-
-    /**
-     * @return mixed[]
-     */
-    public static function enumNameProviderIsOrdinalDefinedCheck()
-    {
-        return [
-            [1, true],
-            [5, false],
-        ];
     }
 
     /**
@@ -189,7 +189,7 @@ TEXT;
             [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
             [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
             [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
-            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT(), true],
+            [DuplicatedOrdinalEnum::CAT(), DuplicatedOrdinalEnum::DEFAULT(), true],
         ];
     }
 
@@ -214,18 +214,8 @@ TEXT;
             [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
             [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
             [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
-            [EnumWithDuplicatedOrdinal::CAT(), EnumWithDuplicatedOrdinal::DEFAULT(), false],
+            [DuplicatedOrdinalEnum::CAT(), DuplicatedOrdinalEnum::DEFAULT(), false],
         ];
-    }
-
-    /**
-     */
-    public function testCanCreateFromDuplicateOrdinal()
-    {
-        $defaultEnumOrdinal = EnumWithDuplicatedOrdinal::DEFAULT()->getOrdinal();
-        $catEnum = OtherSimpleEnum::getFirstByOrdinal($defaultEnumOrdinal);
-
-        static::assertTrue(OtherSimpleEnum::CAT()->isSame($catEnum));
     }
 
     /**
