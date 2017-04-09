@@ -45,7 +45,7 @@ class EnumMapBuilder
 
     /**
      * @param mixed[] $constantMap
-     * @param Closure $createEnumInstance
+     * @param Closure $createEnumInstance Signature must be $createEnumInstance(string $name, int $ordinal).
      */
     public function __construct(array $constantMap, Closure $createEnumInstance)
     {
@@ -93,8 +93,29 @@ class EnumMapBuilder
     protected function addNameOrdinalPairToMaps(string $name, int $ordinal)
     {
         $instance = ($this->createEnumInstance)($name, $ordinal);
-        $this->nameToInstanceMap[$name] = $instance;
+        $this->addNameToInstanceMapping($name, $instance);
+        $this->addOrdinalToInstanceMapping($ordinal, $instance);
+    }
 
+    /**
+     * @param string $name
+     * @param mixed $instance An instance of the enum. It is not strictly-typed on purpose. Here we are taking advantage
+     *                        of the fact that PHP is a dynamically-typed language to keep the EnumMapBuilder testable
+     *                        and completely decoupled from any particular enum implementation.
+     */
+    protected function addNameToInstanceMapping(string $name, $instance)
+    {
+        $this->nameToInstanceMap[$name] = $instance;
+    }
+
+    /**
+     * @param int $ordinal
+     * @param mixed $instance An instance of the enum. It is not strictly-typed on purpose. Here we are taking advantage
+     *                        of the fact that PHP is a dynamically-typed language to keep the EnumMapBuilder testable
+     *                        and completely decoupled from any particular enum implementation.
+     */
+    protected function addOrdinalToInstanceMapping(int $ordinal, $instance)
+    {
         if (!isset($this->ordinalToInstanceMap[$ordinal])) {
             $this->ordinalToInstanceMap[$ordinal] = [];
         }
