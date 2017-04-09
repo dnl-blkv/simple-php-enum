@@ -98,16 +98,9 @@ TEXT;
 
     /**
      */
-    public function testCanGetEnumByOrdinal()
+    public function testCanGetFirstEnumByOrdinal()
     {
         static::assertEquals(SimpleEnum::DOG(), SimpleEnum::getFirstByOrdinal(1));
-    }
-
-    /**
-     */
-    public function testCanGetEnumByCustomOrdinal()
-    {
-        static::assertEquals(SimpleEnum::BIRD(), SimpleEnum::getFirstByOrdinal(3));
     }
 
     /**
@@ -126,7 +119,7 @@ TEXT;
     /**
      * @expectedException \dnl_blkv\enum\exception\UndefinedEnumOrdinalException
      */
-    public function testCanNotGetEnumByUndefinedOrdinal()
+    public function testCanNotGetFirstEnumByUndefinedOrdinal()
     {
         SimpleEnum::getFirstByOrdinal(20);
     }
