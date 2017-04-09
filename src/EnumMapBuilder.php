@@ -19,24 +19,24 @@ class EnumMapBuilder
     const ENUM_ORDINAL_DEFAULT = 0;
 
     /**
-     * @var string
-     */
-    protected $enumClassBase;
-
-    /**
      * @var mixed[]
      */
     protected $constantMap;
 
     /**
-     * @var Enum[]
+     * @var Closure
      */
-    protected $nameToInstanceMap;
+    protected $createEnumInstance;
 
     /**
      * @var Enum[]
      */
-    protected $ordinalToInstanceMap;
+    protected $nameToInstanceMap = [];
+
+    /**
+     * @var Enum[]
+     */
+    protected $ordinalToInstanceMap = [];
 
     /**
      * @var int
@@ -44,38 +44,29 @@ class EnumMapBuilder
     protected $lastOrdinal;
 
     /**
-     * @param string $enumClassBase
      * @param mixed[] $constantMap
      * @param Closure $createEnumInstance
      */
-    public function __construct(string $enumClassBase, array $constantMap, Closure $createEnumInstance)
+    public function __construct(array $constantMap, Closure $createEnumInstance)
     {
-        $this->enumClassBase = $enumClassBase;
         $this->constantMap = $constantMap;
-        $this->nameToInstanceMap = $this->createNameToInstanceMap($createEnumInstance);
-        $this->ordinalToInstanceMap = $this->createOrdinalToInstanceMap($this->nameToInstanceMap);
+        $this->createEnumInstance = $createEnumInstance;
+        $this->initializeEnumMaps();
     }
 
     /**
-     * @param Closure $createEnumInstance
-     *
-     * @return Enum[]
      */
-    protected function createNameToInstanceMap(Closure $createEnumInstance): array
+    protected function initializeEnumMaps()
     {
-        $nameToInstanceMap = [];
-
         $this->resetLastOrdinal();
 
         foreach ($this->constantMap as $name => $constantValue) {
-            if ($this->isValidEnumConstant($name)) {
+            if (EnumLib::isValidEnumConstantName($name)) {
                 $nextOrdinal = $this->getNextOrdinal($constantValue);
-                $nameToInstanceMap[$name] = $createEnumInstance($name, $nextOrdinal);
+                $this->addNameOrdinalPairToMaps($name, $nextOrdinal);
                 $this->updateLastOrdinal($nextOrdinal);
             }
         }
-
-        return $nameToInstanceMap;
     }
 
     /**
@@ -83,46 +74,6 @@ class EnumMapBuilder
     protected function resetLastOrdinal()
     {
         $this->lastOrdinal = self::ENUM_ORDINAL_DEFAULT - 1;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    protected function isValidEnumConstant(string $name): bool
-    {
-        return $this->isEnumConstant($name) && EnumLib::isValidEnumConstantName($name);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    protected function isEnumConstant(string $name): bool
-    {
-        return !$this->isConstantDefinedInBaseEnum($name);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    protected function isConstantDefinedInBaseEnum(string $name): bool
-    {
-        return defined($this->getConstantNameInBaseClass($name));
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    protected function getConstantNameInBaseClass(string $name): string
-    {
-        return sprintf(self::PATTERN_CLASS_CONSTANT, $this->enumClassBase, $name);
     }
 
     /**
@@ -136,33 +87,27 @@ class EnumMapBuilder
     }
 
     /**
+     * @param string $name
+     * @param int $ordinal
+     */
+    protected function addNameOrdinalPairToMaps(string $name, int $ordinal)
+    {
+        $instance = ($this->createEnumInstance)($name, $ordinal);
+        $this->nameToInstanceMap[$name] = $instance;
+
+        if (!isset($this->ordinalToInstanceMap[$ordinal])) {
+            $this->ordinalToInstanceMap[$ordinal] = [];
+        }
+
+        $this->ordinalToInstanceMap[$ordinal][] = $instance;
+    }
+
+    /**
      * @param int $lastOrdinalNew
      */
     protected function updateLastOrdinal(int $lastOrdinalNew)
     {
         $this->lastOrdinal = $lastOrdinalNew;
-    }
-
-    /**
-     * @param Enum[] $nameToInstanceMap
-     *
-     * @return Enum[]
-     */
-    protected function createOrdinalToInstanceMap(array $nameToInstanceMap): array
-    {
-        $ordinalToInstanceMap = [];
-
-        foreach ($nameToInstanceMap as $instance) {
-            $ordinal = $instance->getOrdinal();
-
-            if (!isset($ordinalToInstanceMap[$ordinal])) {
-                $ordinalToInstanceMap[$ordinal] = [];
-            }
-
-            $ordinalToInstanceMap[$ordinal][] = $instance;
-        }
-
-        return $ordinalToInstanceMap;
     }
 
     /**

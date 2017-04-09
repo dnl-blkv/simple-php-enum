@@ -21,7 +21,7 @@ abstract class EnumLib
      *
      * @return bool
      */
-    final public static function isPSR1CompliantConstantName(string $name): bool
+    final private static function isPSR1CompliantConstantName(string $name): bool
     {
         return strtoupper($name) === $name;
     }
@@ -31,7 +31,7 @@ abstract class EnumLib
      *
      * @return bool
      */
-    final public static function isEnumConstantName(string $name): bool
+    final private static function isEnumConstantName(string $name): bool
     {
         return ctype_upper($name[0]);
     }

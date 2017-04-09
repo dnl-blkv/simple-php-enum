@@ -128,7 +128,7 @@ abstract class Enum
      */
     protected static function initializeEnumMaps()
     {
-        $initializer = new EnumMapBuilder(self::class, static::getConstants(), static::getCreateEnumInstanceClosure());
+        $initializer = new EnumMapBuilder(static::getConstants(), static::getCreateEnumInstanceClosure());
         static::$nameToInstanceMapCache[static::class] = $initializer->getNameToInstanceMap();
         static::$ordinalToInstanceMapCache[static::class] = $initializer->getOrdinalToInstanceMap();
     }
