@@ -1,19 +1,19 @@
 <?php
 namespace dnl_blkv\enum\test;
 
-use dnl_blkv\enum\EnumMapBuilder;
+use dnl_blkv\enum\EnumMapper;
 use PHPUnit\Framework\TestCase;
 use Closure;
 
 /**
  */
-class EnumMapBuilderTest extends TestCase
+class EnumMapperTest extends TestCase
 {
     /**
      */
     public function testCanDefineNameToInstanceMap()
     {
-        $initializer = $this->createEnumMapBuilder($this->getEnumConstants());
+        $initializer = $this->createEnumMapper($this->getEnumConstants());
         $resultExpected = [
             'CAT' => 'CAT|0',
             'DOG' => 'DOG|1',
@@ -28,11 +28,11 @@ class EnumMapBuilderTest extends TestCase
     /**
      * @param mixed[] $constants
      *
-     * @return EnumMapBuilder
+     * @return EnumMapper
      */
-    private function createEnumMapBuilder(array $constants): EnumMapBuilder
+    private function createEnumMapper(array $constants): EnumMapper
     {
-        return new EnumMapBuilder($constants, $this->getCreateEnumInstanceClosure());
+        return new EnumMapper($constants, $this->getCreateEnumInstanceClosure());
     }
 
     /**
@@ -64,7 +64,7 @@ class EnumMapBuilderTest extends TestCase
      */
     public function testCanDefineOrdinalToInstanceMap()
     {
-        $initializer = $this->createEnumMapBuilder($this->getEnumConstants());
+        $enumMapper = $this->createEnumMapper($this->getEnumConstants());
         $resultExpected = [
             '0' => ['CAT|0'],
             '1' => ['DOG|1', 'FISH|1'],
@@ -72,6 +72,6 @@ class EnumMapBuilderTest extends TestCase
             '4' => ['COW|4'],
         ];
 
-        static::assertEquals($resultExpected, $initializer->getOrdinalToInstanceMap());
+        static::assertEquals($resultExpected, $enumMapper->getOrdinalToInstanceMap());
     }
 }

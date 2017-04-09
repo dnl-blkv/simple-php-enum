@@ -6,7 +6,7 @@ use Closure;
 
 /**
  */
-class EnumMapBuilder
+class EnumMapper
 {
     /**
      * The prefix we use to access a constant which is defined in the Enum class.
@@ -100,7 +100,7 @@ class EnumMapBuilder
     /**
      * @param string $name
      * @param mixed $instance An instance of the enum. It is not strictly-typed on purpose. Here we are taking advantage
-     *                        of the fact that PHP is a dynamically-typed language to keep the EnumMapBuilder testable
+     *                        of the fact that PHP is a dynamically-typed language to keep the EnumMapper testable
      *                        and completely decoupled from any particular enum implementation.
      */
     protected function addNameToInstanceMapping(string $name, $instance)
@@ -111,7 +111,7 @@ class EnumMapBuilder
     /**
      * @param int $ordinal
      * @param mixed $instance An instance of the enum. It is not strictly-typed on purpose. Here we are taking advantage
-     *                        of the fact that PHP is a dynamically-typed language to keep the EnumMapBuilder testable
+     *                        of the fact that PHP is a dynamically-typed language to keep the EnumMapper testable
      *                        and completely decoupled from any particular enum implementation.
      */
     protected function addOrdinalToInstanceMapping(int $ordinal, $instance)
