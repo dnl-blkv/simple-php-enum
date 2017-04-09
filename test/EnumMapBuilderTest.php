@@ -11,18 +11,9 @@ class EnumMapBuilderTest extends TestCase
 {
     /**
      */
-    public function testCanDefineNameToOrdinalMap()
+    public function testCanDefineNameToInstanceMap()
     {
-        $initializer = $this->createEnumMapBuilder(
-            [
-                'CAT' => null,
-                'DOG' => null,
-                'FISH'=> 1,
-                'BIRD'=> null,
-                'COW' => 4,
-                '_IGNORED_ANIMAL' => null,
-            ]
-        );
+        $initializer = $this->createEnumMapBuilder($this->getEnumConstants());
         $resultExpected = [
             'CAT' => 'CAT|0',
             'DOG' => 'DOG|1',
@@ -49,10 +40,38 @@ class EnumMapBuilderTest extends TestCase
      */
     private function getCreateEnumInstanceClosure(): Closure
     {
-
-
         return function (string $name, int $ordinal) {
             return $name . '|' . $ordinal;
         };
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getEnumConstants(): array
+    {
+        return [
+            'CAT' => null,
+            'DOG' => null,
+            'FISH'=> 1,
+            'BIRD'=> null,
+            'COW' => 4,
+            '_IGNORED_ANIMAL' => null,
+        ];
+    }
+
+    /**
+     */
+    public function testCanDefineOrdinalToInstanceMap()
+    {
+        $initializer = $this->createEnumMapBuilder($this->getEnumConstants());
+        $resultExpected = [
+            '0' => ['CAT|0'],
+            '1' => ['DOG|1', 'FISH|1'],
+            '2' => ['BIRD|2'],
+            '4' => ['COW|4'],
+        ];
+
+        static::assertEquals($resultExpected, $initializer->getOrdinalToInstanceMap());
     }
 }
