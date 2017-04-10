@@ -30,7 +30,6 @@ abstract class Enum
      */
     const __ERROR_METHOD_NOT_FOUND = 'Method not found in "%s": "%s".';
     const __ERROR_ARGUMENTS_NOT_EMPTY = 'Enum instantiation methods do not accept arguments.';
-    const __ERROR_COMPARING_TO_OTHER_TYPE = 'Only enums of the same type can be compared with %s method.';
 
     /**
      * @var static[]
@@ -175,7 +174,7 @@ abstract class Enum
      */
     public function isSame(Enum $other): bool
     {
-        return $this === $other;
+        return EnumLib::isSame($this, $other);
     }
 
     /**
@@ -252,7 +251,7 @@ abstract class Enum
      */
     public function isEqual(Enum $other): bool
     {
-        return $this->getOrdinal() === $other->getOrdinal() && $this->isSameTypeAsThis($other);
+        return EnumLib::isEqual($this, $other);
     }
 
     /**
@@ -268,33 +267,9 @@ abstract class Enum
      *
      * @return bool
      */
-    protected function isSameTypeAsThis(Enum $other): bool
-    {
-        return static::class === get_class($other);
-    }
-
-    /**
-     * @param Enum $other
-     *
-     * @return bool
-     */
     public function isLess(Enum $other): bool
     {
-        $this->assertSameTypeAsThis($other);
-
-        return $this->getOrdinal() < $other->getOrdinal();
-    }
-
-    /**
-     * @param Enum $other
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function assertSameTypeAsThis(Enum $other)
-    {
-        if (!$this->isSameTypeAsThis($other)) {
-            throw new InvalidArgumentException(sprintf(self::__ERROR_COMPARING_TO_OTHER_TYPE, __METHOD__));
-        }
+        return EnumLib::isLess($this, $other);
     }
 
     /**
@@ -304,9 +279,7 @@ abstract class Enum
      */
     public function isLessOrEqual(Enum $other): bool
     {
-        $this->assertSameTypeAsThis($other);
-
-        return $this->getOrdinal() <= $other->getOrdinal();
+        return EnumLib::isLessOrEqual($this, $other);
     }
 
     /**
@@ -316,9 +289,7 @@ abstract class Enum
      */
     public function isGreater(Enum $other): bool
     {
-        $this->assertSameTypeAsThis($other);
-
-        return $this->getOrdinal() > $other->getOrdinal();
+        return EnumLib::isGreater($this, $other);
     }
 
     /**
@@ -328,9 +299,7 @@ abstract class Enum
      */
     public function isGreaterOrEqual(Enum $other): bool
     {
-        $this->assertSameTypeAsThis($other);
-
-        return $this->getOrdinal() >= $other->getOrdinal();
+        return EnumLib::isGreaterOrEqual($this, $other);
     }
 
     /**

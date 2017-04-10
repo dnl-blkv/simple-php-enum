@@ -34,4 +34,183 @@ class EnumLibTest extends TestCase
             ['0INVALID_CONSTANT_NAME', false],
         ];
     }
+
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsEqualCheck
+     */
+    public function testCanCheckIsEqual(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, EnumLib::isEqual($one, $other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsEqualCheck()
+    {
+        return [
+            [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
+            [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
+            [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
+            [DuplicatedOrdinalEnum::CAT(), DuplicatedOrdinalEnum::DEFAULT(), true],
+        ];
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsSameCheck
+     */
+    public function testCanCheckIsSame(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, EnumLib::isSame($one, $other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsSameCheck()
+    {
+        return [
+            [SimpleEnum::FISH(), SimpleEnum::FISH(), true],
+            [SimpleEnum::FISH(), SimpleEnum::CAT(), false],
+            [SimpleEnum::DOG(), OtherSimpleEnum::DOG(), false],
+            [DuplicatedOrdinalEnum::CAT(), DuplicatedOrdinalEnum::DEFAULT(), false],
+        ];
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsLessCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsLess(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, EnumLib::isLess($one, $other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsLessCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), true],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), false],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), false],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsLess()
+    {
+        EnumLib::isLess(AccessLevelEnum::ADMIN(), SimpleEnum::CAT());
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsLessOrEqualCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsLessOrEqual(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, EnumLib::isLessOrEqual($one, $other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsLessOrEqualCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), true],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), true],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), false],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsLessOrEqual()
+    {
+        EnumLib::isLessOrEqual(AccessLevelEnum::ADMIN(), SimpleEnum::CAT());
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsGreaterCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsGreater(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, EnumLib::isGreater($one, $other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsGreaterCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), false],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), false],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), true],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsGreater()
+    {
+        EnumLib::isGreater(AccessLevelEnum::ADMIN(), SimpleEnum::CAT());
+    }
+
+    /**
+     * @param Enum $one
+     * @param Enum $other
+     * @param bool $resultExpected
+     *
+     * @dataProvider enumPairProviderIsGreaterOrEqualCheck
+     */
+    public function testCanCompareEnumsOfSameTypeUsingIsGreaterOrEqual(Enum $one, Enum $other, bool $resultExpected)
+    {
+        static::assertEquals($resultExpected, EnumLib::isGreaterOrEqual($one, $other));
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function enumPairProviderIsGreaterOrEqualCheck()
+    {
+        return [
+            [AccessLevelEnum::READ(), AccessLevelEnum::WRITE(), false],
+            [AccessLevelEnum::READ(), AccessLevelEnum::READ(), true],
+            [AccessLevelEnum::ADMIN(), AccessLevelEnum::WRITE(), true],
+        ];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testCanNotCompareEnumsOfDifferentTypesUsingIsGreaterOrEqual()
+    {
+        EnumLib::isGreaterOrEqual(AccessLevelEnum::ADMIN(), SimpleEnum::CAT());
+    }
 }
