@@ -16,7 +16,6 @@ abstract class EnumLib
     /**
      * Fields for enum serialization.
      */
-    const FIELD_TYPE = 'type';
     const FIELD_NAME = 'name';
     const FIELD_ORDINAL = 'ordinal';
 
@@ -168,9 +167,10 @@ abstract class EnumLib
     {
         return json_encode(
             [
-                self::FIELD_TYPE => get_class($enum),
-                self::FIELD_NAME => $enum->getName(),
-                self::FIELD_ORDINAL => $enum->getOrdinal(),
+                get_class($enum) => [
+                    self::FIELD_NAME => $enum->getName(),
+                    self::FIELD_ORDINAL => $enum->getOrdinal(),
+                ]
             ],
             JSON_PRETTY_PRINT
         );

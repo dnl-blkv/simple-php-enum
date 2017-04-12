@@ -15,9 +15,10 @@ class EnumTest extends TestCase
      */
     const EXPECTED_RESULT_SIMPLE_ENUM_FISH_JSON = <<<TEXT
 {
-    "type": "dnl_blkv\\\\enum\\\\test\\\\SimpleEnum",
-    "name": "FISH",
-    "ordinal": 4
+    "dnl_blkv\\\\enum\\\\test\\\\SimpleEnum": {
+        "name": "FISH",
+        "ordinal": 4
+    }
 }
 TEXT;
 
