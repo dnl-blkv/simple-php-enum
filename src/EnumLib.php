@@ -14,6 +14,13 @@ abstract class EnumLib
     const ERROR_COMPARING_TO_OTHER_TYPE = 'Only enums of the same type can be compared with %s method.';
 
     /**
+     * Fields for enum serialization.
+     */
+    const FIELD_TYPE = 'type';
+    const FIELD_NAME = 'name';
+    const FIELD_ORDINAL = 'ordinal';
+
+    /**
      * @param string $name
      *
      * @return bool
@@ -140,5 +147,32 @@ abstract class EnumLib
         static::assertSameType($one, $other);
 
         return $one->getOrdinal() >= $other->getOrdinal();
+    }
+
+    /**
+     * @param Enum $enum
+     *
+     * @return string
+     */
+    final public static function toString(Enum $enum): string
+    {
+        return $enum->getName();
+    }
+
+    /**
+     * @param Enum $enum
+     *
+     * @return string
+     */
+    final public static function toJson(Enum $enum): string
+    {
+        return json_encode(
+            [
+                self::FIELD_TYPE => get_class($enum),
+                self::FIELD_NAME => $enum->getName(),
+                self::FIELD_ORDINAL => $enum->getOrdinal(),
+            ],
+            JSON_PRETTY_PRINT
+        );
     }
 }

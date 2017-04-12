@@ -11,13 +11,13 @@ use InvalidArgumentException;
 class EnumTest extends TestCase
 {
     /**
-     * Expected result of converting SimpleEnum::FISH() to string.
+     * Expected result of serializing SimpleEnum::FISH().
      */
-    const EXPECTED_RESULT_SIMPLE_ENUM_FISH_AS_STRING = <<<TEXT
+    const EXPECTED_RESULT_SIMPLE_ENUM_FISH_JSON = <<<TEXT
 {
-    "dnl_blkv\\\\enum\\\\test\\\\SimpleEnum": {
-        "FISH": 4
-    }
+    "type": "dnl_blkv\\\\enum\\\\test\\\\SimpleEnum",
+    "name": "FISH",
+    "ordinal": 4
 }
 TEXT;
 
@@ -136,13 +136,6 @@ TEXT;
     public function testCanGetOrdinal()
     {
         static::assertEquals(4, SimpleEnum::FISH()->getOrdinal());
-    }
-
-    /**
-     */
-    public function testCanConvertToString()
-    {
-        static::assertEquals(static::EXPECTED_RESULT_SIMPLE_ENUM_FISH_AS_STRING, strval(SimpleEnum::FISH()));
     }
 
     /**
@@ -337,5 +330,26 @@ TEXT;
     public function testCanNotCompareEnumsOfDifferentTypesUsingIsGreaterOrEqual()
     {
         AccessLevelEnum::ADMIN()->isGreaterOrEqual(SimpleEnum::CAT());
+    }
+
+    /**
+     */
+    public function testCanConvertToStringWithMagicMethod()
+    {
+        static::assertEquals('FISH', (string)SimpleEnum::FISH());
+    }
+
+    /**
+     */
+    public function testCanConvertToStringWithExplicitMethod()
+    {
+        static::assertEquals('FISH', SimpleEnum::FISH()->toString());
+    }
+
+    /**
+     */
+    public function testCanConvertToJson()
+    {
+        static::assertEquals(self::EXPECTED_RESULT_SIMPLE_ENUM_FISH_JSON, SimpleEnum::FISH()->toJson());
     }
 }

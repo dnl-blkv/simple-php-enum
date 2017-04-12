@@ -305,8 +305,24 @@ abstract class Enum
     /**
      * @return string
      */
+    public function toString(): string
+    {
+        return strval($this);
+    }
+
+    /**
+     * @return string
+     */
     public function __toString(): string
     {
-        return json_encode([static::class => [$this->name => $this->ordinal]], JSON_PRETTY_PRINT);
+        return EnumLib::toString($this);
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson(): string
+    {
+        return EnumLib::toJson($this);
     }
 }

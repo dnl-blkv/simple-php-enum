@@ -3,14 +3,24 @@ namespace dnl_blkv\enum\test;
 
 use dnl_blkv\enum\Enum;
 use dnl_blkv\enum\EnumLib;
-use PHPUnit\Framework\TestCase;
-use BadMethodCallException;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 
 /**
  */
 class EnumLibTest extends TestCase
 {
+    /**
+     * Expected result of serializing SimpleEnum::FISH().
+     */
+    const EXPECTED_RESULT_SIMPLE_ENUM_FISH_JSON = <<<TEXT
+{
+    "type": "dnl_blkv\\\\enum\\\\test\\\\SimpleEnum",
+    "name": "FISH",
+    "ordinal": 4
+}
+TEXT;
+
     /**
      * @param string $constantName
      * @param bool $resultExpected
@@ -34,7 +44,6 @@ class EnumLibTest extends TestCase
             ['0INVALID_CONSTANT_NAME', false],
         ];
     }
-
 
     /**
      * @param Enum $one
@@ -212,5 +221,19 @@ class EnumLibTest extends TestCase
     public function testCanNotCompareEnumsOfDifferentTypesUsingIsGreaterOrEqual()
     {
         EnumLib::isGreaterOrEqual(AccessLevelEnum::ADMIN(), SimpleEnum::CAT());
+    }
+
+    /**
+     */
+    public function testCanSerializeAsJson()
+    {
+        static::assertEquals(self::EXPECTED_RESULT_SIMPLE_ENUM_FISH_JSON, EnumLib::toJson(SimpleEnum::FISH()));
+    }
+
+    /**
+     */
+    public function testCanCovertToString()
+    {
+        static::assertEquals('FISH', EnumLib::toString(SimpleEnum::FISH()));
     }
 }
