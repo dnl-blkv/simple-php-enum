@@ -96,16 +96,16 @@ abstract class Enum
      */
     protected static function getOrdinalToInstanceMap(): array
     {
-        static::initialize();
+        static::ensureMapperInitialized();
 
         return static::$mapperCache[static::class]->getOrdinalToInstanceMap();
     }
 
     /**
      */
-    protected static function initialize()
+    protected static function ensureMapperInitialized()
     {
-        if (!static::isInitialized()) {
+        if (!static::isMapperInitialized()) {
             static::initializeMapper();
         }
     }
@@ -113,7 +113,7 @@ abstract class Enum
     /**
      * @return bool
      */
-    protected static function isInitialized(): bool
+    protected static function isMapperInitialized(): bool
     {
         return isset(static::$mapperCache[static::class]);
     }
@@ -235,7 +235,7 @@ abstract class Enum
      */
     protected static function getNameToInstanceMap(): array
     {
-        static::initialize();
+        static::ensureMapperInitialized();
 
         return static::$mapperCache[static::class]->getNameToInstanceMap();
     }
