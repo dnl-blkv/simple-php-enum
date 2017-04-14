@@ -206,7 +206,8 @@ echo BeerEnum::IPA() . PHP_EOL;
  * Outputs:
  * {
  *     "\your\name\space\BeerEnum": {
- *         "IPA": 1
+ *         "name": "IPA",
+ *         "ordinal": 1
  *      }
  * }
  */
