@@ -32,14 +32,9 @@ abstract class Enum
     const __ERROR_ARGUMENTS_NOT_EMPTY = 'Enum instantiation methods do not accept arguments.';
 
     /**
-     * @var static[]
+     * @var EnumMapper[]
      */
-    protected static $nameToInstanceMapCache = [];
-
-    /**
-     * @var static[]
-     */
-    protected static $ordinalToInstanceMapCache = [];
+    protected static $mapperCache = [];
 
     /**
      * @var string
@@ -103,7 +98,7 @@ abstract class Enum
     {
         static::initialize();
 
-        return static::$ordinalToInstanceMapCache[static::class];
+        return static::$mapperCache[static::class]->getOrdinalToInstanceMap();
     }
 
     /**
@@ -111,7 +106,7 @@ abstract class Enum
     protected static function initialize()
     {
         if (!static::isInitialized()) {
-            static::initializeEnumMaps();
+            static::initializeMapper();
         }
     }
 
@@ -120,16 +115,17 @@ abstract class Enum
      */
     protected static function isInitialized(): bool
     {
-        return isset(static::$ordinalToInstanceMapCache[static::class]);
+        return isset(static::$mapperCache[static::class]);
     }
 
     /**
      */
-    protected static function initializeEnumMaps()
+    protected static function initializeMapper()
     {
-        $enumMapper = new EnumMapper(static::getConstants(), static::getCreateEnumInstanceClosure());
-        static::$nameToInstanceMapCache[static::class] = $enumMapper->getNameToInstanceMap();
-        static::$ordinalToInstanceMapCache[static::class] = $enumMapper->getOrdinalToInstanceMap();
+        static::$mapperCache[static::class] = new EnumMapper(
+            static::getConstants(),
+            static::getCreateEnumInstanceClosure()
+        );
     }
 
     /**
@@ -241,7 +237,7 @@ abstract class Enum
     {
         static::initialize();
 
-        return static::$nameToInstanceMapCache[static::class];
+        return static::$mapperCache[static::class]->getNameToInstanceMap();
     }
 
     /**
